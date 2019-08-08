@@ -16,6 +16,7 @@ typedef struct cutilsString{
 int cutilsStringInit(cutilsString *str, size_t len);
 int cutilsStringCopy(cutilsString *dst, cutilsString *src);
 void cutilsStringMove(cutilsString *dst, cutilsString *src);
+void cutilsStringSwap(cutilsString *a, cutilsString *b);
 void cutilsStringFree(cutilsString *str);
 
 int cutilsStringResize(cutilsString *str, size_t len);

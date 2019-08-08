@@ -28,8 +28,14 @@ int cutilsStringCopy(cutilsString *dst, cutilsString *src){
 }
 
 void cutilsStringMove(cutilsString *dst, cutilsString *src){
-	memcpy(dst, src, sizeof(cutilsString));
+	dst = src;
 	memset(src, 0, sizeof(cutilsString));
+}
+
+void cutilsStringSwap(cutilsString *a, cutilsString *b){
+	cutilsString tmp = *a;
+	*a = *b;
+	*b = tmp;
 }
 
 void cutilsStringFree(cutilsString *str){
