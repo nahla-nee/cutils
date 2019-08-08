@@ -36,4 +36,9 @@ int cutilsFileReadIndex(cutilsFile *file, cutilsByteStream *stream, size_t index
 int cutilsFileReadBytes(cutilsFile *file, cutilsByteStream *stream, size_t bytes);
 int cutilsFileReadBytesIndex(cutilsFile *file, cutilsByteStream *stream, size_t bytes, size_t index);
 
+int cutilsFileWrite(cutilsFile *file, cutilsByteStream *stream);
+int cutilsFileWriteIndex(cutilsFile *file, cutilsByteStream *stream, size_t index);
+int cutilsFileWriteBytes(cutilsFile *file, cutilsByteStream *stream, size_t bytes);
+int cutilsFileWriteBytesIndex(cutilsFile *file, cutilsByteStream *stream, size_t bytes, size_t index);
+
 #endif

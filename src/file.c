@@ -116,3 +116,24 @@ int cutilsFileReadBytesIndex(cutilsFile *file, cutilsByteStream *stream, size_t 
 
 	return CUTILS_OK;
 }
+
+int cutilsFileWrite(cutilsFile *file, cutilsByteStream *stream){
+	return cutilsFileWriteBytesIndex(file, stream, stream->size, 0);
+}
+
+int cutilsFileWriteIndex(cutilsFile *file, cutilsByteStream *stream, size_t index){
+	return cutilsFileWriteBytesIndex(file, stream, stream->size, index);
+}
+
+int cutilsFileWriteBytes(cutilsFile *file, cutilsByteStream *stream, size_t bytes){
+	return cutilsFileWriteBytesIndex(file, stream, bytes, 0);
+}
+
+int cutilsFileWriteBytesIndex(cutilsFile *file, cutilsByteStream *stream, size_t bytes, size_t index){
+	size_t bytesWritten = fwrite(stream->stream, 1, bytes, file->file);
+	if(bytesWritten != bytes){
+		return CUTILS_BAD_WRITE;
+	}
+
+	return CUTILS_OK;
+}
