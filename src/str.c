@@ -1,6 +1,11 @@
 #include "str.h"
 
 int cutilsStringInit(cutilsString *str, size_t len){
+	if(len == 0){
+		memset(str, 0, sizeof(cutilsString));
+		return CUTILS_OK;
+	}
+
 	//allocate one more byte for null terminator
 	str->str = calloc(len+1, 1);
 	if(str->str == NULL){

@@ -13,7 +13,12 @@ typedef struct cutilsString{
 	size_t capacity;
 } cutilsString;
 
+/*
+preallocates memory for the string, if successful it will have len bytes to hold chars in
+if len is 0 then this function will just zero out the struct and return
+*/
 int cutilsStringInit(cutilsString *str, size_t len);
+
 int cutilsStringCopy(cutilsString *dst, cutilsString *src);
 void cutilsStringMove(cutilsString *dst, cutilsString *src);
 void cutilsStringSwap(cutilsString *a, cutilsString *b);
