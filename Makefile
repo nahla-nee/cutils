@@ -9,4 +9,4 @@ FLAGS = -O2 -fpic -c
 default:
 	cc ${FLAGS} ${SRCS} ${INCLUDE}
 	mv *.o out
-	cc -shared -o libcutils out/*.o
+	cc -shared -o libcutils.so out/*.o
