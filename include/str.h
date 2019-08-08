@@ -49,7 +49,6 @@ int cutilsStringSetString(cutilsString *str, const cutilsString *x);
 		const char *: cutilsStringAppendCStr,\
 		cutilsString *: cutilsStringAppendString,\
 		const cutilsString *: cutilsStringAppendString,\
-		default: cutilsStringAppendChar\
 	)(STR, X)
 
 #define cutilsStringInsert(STR, X, INDEX) _Generic((X),\
@@ -61,7 +60,6 @@ int cutilsStringSetString(cutilsString *str, const cutilsString *x);
 		const char *: cutilsStringInsertCStr,\
 		cutilsString *: cutilsStringInsertString,\
 		const cutilsString *: cutilsStringInsertString,\
-		default: cutilsStringInsertChar\
 	)(STR, X, INDEX)
 
 #define cutilsStringSet(STR, X) _Generic((X),\
@@ -73,7 +71,6 @@ int cutilsStringSetString(cutilsString *str, const cutilsString *x);
 		const char *: cutilsStringSetCStr,\
 		cutilsString *: cutilsStringSetString,\
 		const cutilsString *: cutilsStringSetString,\
-		default: cutilsStringSetChar\
 	)(STR, X)
 
 #endif
