@@ -28,7 +28,7 @@ int cutilsStringCopy(cutilsString *dst, cutilsString *src){
 }
 
 void cutilsStringMove(cutilsString *dst, cutilsString *src){
-	dst = src;
+	*dst = *src;
 	memset(src, 0, sizeof(cutilsString));
 }
 
