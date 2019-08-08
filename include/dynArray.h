@@ -45,8 +45,14 @@
 	}\
 \
 	void NAME##Move(NAME *dst, NAME *src){\
-		memcpy(dst, src, sizeof(NAME));\
+		*dst = *src;\
 		memset(src, 0, sizeof(NAME));\
+	}\
+\
+	void NAME##Swap(NAME *a, NAME *b){\
+		NAME tmp = *a;\
+		*a = *b;\
+		*b = tmp;\
 	}\
 \
 	void NAME##Free(NAME *arr){\
