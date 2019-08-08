@@ -1,18 +1,18 @@
 #include "str.h"
 
-int cutilsStringInit(cutilsString *str, size_t len){
-	if(len == 0){
+int cutilsStringInit(cutilsString *str, size_t capacity){
+	if(capacity == 0){
 		memset(str, 0, sizeof(cutilsString));
 		return CUTILS_OK;
 	}
 
 	//allocate one more byte for null terminator
-	str->str = calloc(len+1, 1);
+	str->str = calloc(capacity+1, 1);
 	if(str->str == NULL){
 		return CUTILS_NOMEM;
 	}
-	str->len = len;
-	str->capacity = len;
+	str->len = 0;
+	str->capacity = capacity;
 	return CUTILS_OK;
 }
 

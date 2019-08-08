@@ -17,7 +17,7 @@ typedef struct cutilsString{
 preallocates memory for the string, if successful it will have len bytes to hold chars in
 if len is 0 then this function will just zero out the struct and return
 */
-int cutilsStringInit(cutilsString *str, size_t len);
+int cutilsStringInit(cutilsString *str, size_t capacity);
 
 int cutilsStringCopy(cutilsString *dst, cutilsString *src);
 void cutilsStringMove(cutilsString *dst, cutilsString *src);
