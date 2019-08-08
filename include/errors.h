@@ -6,5 +6,6 @@
 #define CUTILS_OUT_OF_BOUNDS 2
 #define CUTILS_FOPEN 3
 #define CUTILS_BAD_READ 4
+#define CUTILS_BAD_WRITE 5
 
 #endif
