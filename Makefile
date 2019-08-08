@@ -1,6 +1,6 @@
-SRCS = src/str.c src/bytestream.c
+SRCS = src/str.c src/bytestream.c src/file.c
 INCLUDE = -Iinclude/
-FLAGS = -O2 -fpic -c
+FLAGS = -O2 -fpic -c -D_FILE_OFFSET_BITS=64
 
 .PHONY: .clean
 .clean:
