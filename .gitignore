@@ -2,3 +2,4 @@ out/
 test*
 *.sh
 libcutils.so
+.vscode
