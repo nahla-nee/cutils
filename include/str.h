@@ -28,6 +28,10 @@ int cutilsStringResize(cutilsString *str, size_t len);
 int cutilsStringResizeChar(cutilsString *str, size_t len, char c);
 int cutilsStringReserve(cutilsString *str, size_t capcity);
 
+int cutilsStringAppendChar(cutilsString *str, char x);
+int cutilsStringAppendCStr(cutilsString *str, const char *x);
+int cutilsStringAppendString(cutilsString *str, cutilsString *x);
+
 int cutilsStringInsertChar(cutilsString *str, char x, size_t index);
 int cutilsStringInsertCStr(cutilsString *str, const char *x, size_t index);
 int cutilsStringInsertString(cutilsString *str, const cutilsString *x, size_t index);
@@ -36,7 +40,19 @@ int cutilsStringSetChar(cutilsString *str, char x);
 int cutilsStringSetCStr(cutilsString *str, const char *x);
 int cutilsStringSetString(cutilsString *str, const cutilsString *x);
 
-#define cutilsStringInsert(str, X, index) _Generic((X),\
+#define cutilsStringAppend(STR, X) _Generic((X),\
+		char: cutilsStringAppendChar,\
+		const char: cutilsStringAppendChar,\
+		int: cutilsStringAppendChar,\
+		const int: cutilsStringAppendChar,\
+		char *: cutilsStringAppendCStr,\
+		const char *: cutilsStringAppendCStr,\
+		cutilsString *: cutilsStringAppendString,\
+		const cutilsString *: cutilsStringAppendString,\
+		default: cutilsStringAppendChar\
+	)(STR, X)
+
+#define cutilsStringInsert(STR, X, INDEX) _Generic((X),\
 		char: cutilsStringInsertChar,\
 		const char: cutilsStringInsertChar,\
 		int: cutilsStringInsertChar,\
@@ -46,9 +62,9 @@ int cutilsStringSetString(cutilsString *str, const cutilsString *x);
 		cutilsString *: cutilsStringInsertString,\
 		const cutilsString *: cutilsStringInsertString,\
 		default: cutilsStringInsertChar\
-	)(str, X, index)
+	)(STR, X, INDEX)
 
-#define cutilsStringSet(str, X) _Generic((X),\
+#define cutilsStringSet(STR, X) _Generic((X),\
 		char: cutilsStringSetChar,\
 		const char: cutilsStringSetChar,\
 		int: cutilsStringSetChar,\
@@ -58,6 +74,6 @@ int cutilsStringSetString(cutilsString *str, const cutilsString *x);
 		cutilsString *: cutilsStringSetString,\
 		const cutilsString *: cutilsStringSetString,\
 		default: cutilsStringSetChar\
-	)(str, X)
+	)(STR, X)
 
 #endif
