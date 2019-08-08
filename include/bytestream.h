@@ -5,6 +5,7 @@
 
 #include <stddef.h>
 #include <string.h>
+#include <stdlib.h>
 
 //really similar to string, except it has no null temrinator
 

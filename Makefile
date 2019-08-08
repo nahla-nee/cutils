@@ -1,4 +1,4 @@
-SRCS = src/str.c
+SRCS = src/str.c src/bytestream.c
 INCLUDE = -Iinclude/
 FLAGS = -O2 -fpic -c
 
