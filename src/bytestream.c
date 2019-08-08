@@ -102,6 +102,10 @@ int cutilsByteStreamAppendStream(cutilsByteStream *stream, cutilsByteStream *x){
 }
 
 int cutilsByteStreamInsertByte(cutilsByteStream *stream, unsigned char x, size_t index){
+	if(index > stream->size){
+		return CUTILS_OUT_OF_BOUNDS;
+	}
+
 	int err = cutilsByteStreamResize(stream, stream->size+1);
 	if(err != CUTILS_OK){
 		return err;
@@ -114,6 +118,10 @@ int cutilsByteStreamInsertByte(cutilsByteStream *stream, unsigned char x, size_t
 }
 
 int cutilsByteStreamInsertStream(cutilsByteStream *stream, cutilsByteStream *x, size_t index){
+	if(index > stream->size){
+		return CUTILS_OUT_OF_BOUNDS;
+	}
+
 	int err= cutilsByteStreamResize(stream, stream->size+x->size);
 	if(err != CUTILS_OK){
 		return err;
