@@ -49,26 +49,28 @@ void cutilsStringFree(cutilsString *str){
 }
 
 int cutilsStringResize(cutilsString *str, size_t len){
-	return cutilsStringResizeChar(str, len, str->str[str->len-1]);
-}
-
-int cutilsStringResizeChar(cutilsString *str, size_t len, char c){
 	if(len >= str->capacity){
-		//allocate memory for new len AND the null terminator
 		char *tmp = realloc(str->str, len+1);
 		if(tmp == NULL){
 			return CUTILS_NOMEM;
 		}
 		str->str = tmp;
+		str->capacity = len+1;
 	}
+
+	str->len = len;
+	str->str[len] = '\0';
+
+	return CUTILS_OK;
+}
+
+int cutilsStringResizeRepeat(cutilsString *str, size_t len, char c){
+	cutilsStringResize(str, len);
 
 	if(len > str->len){
 		//repeat the last character of the string to fill up the space
 		memset(str->str+str->len, c, len-str->len);
 	}
-	str->str[len] = '\0';
-	str->len = len;
-	str->capacity = len;
 
 	return CUTILS_OK;
 }
@@ -89,17 +91,12 @@ int cutilsStringReserve(cutilsString *str, size_t capacity){
 }
 
 int cutilsStringAppendChar(cutilsString *str, char x){
-	if(str->len+1 >= str->capacity){
-		char *tmp = realloc(str->str, str->len+2);
-		if(tmp == NULL){
-			return CUTILS_NOMEM;
-		}
-		str->str = tmp;
-		str->capacity = str->len+2;
+	int err = cutilsStringResize(str, str->len+1);
+	if(err != CUTILS_OK){
+		return err;
 	}
 
 	str->str[str->len] = x;
-	str->str[str->len+1] = '\0';
 	str->len++;
 
 	return CUTILS_OK;
@@ -107,35 +104,25 @@ int cutilsStringAppendChar(cutilsString *str, char x){
 
 int cutilsStringAppendCStr(cutilsString *str, const char *x){
 	size_t xLen = strlen(x);
-	if(str->len+xLen >= str->capacity){
-		char *tmp = realloc(str->str, str->len+xLen+1);
-		if(tmp == NULL){
-			return CUTILS_NOMEM;
-		}
-		str->str = tmp;
-		str->capacity = str->len+xLen+1;
+	int err = cutilsStringResize(str, str->len+xLen);
+	if(err != CUTILS_OK){
+		return err;
 	}
 
 	memcpy(str+str->len, x, xLen);
 	str->len += xLen;
-	str->str[str->len] = '\0';
 
 	return CUTILS_OK;
 }
 
 int cutilsStringAppendString(cutilsString *str, cutilsString *x){
-	if(str->len+x->len >= str->capacity){
-		char *tmp = realloc(str->str, str->len+x->len+1);
-		if(tmp == NULL){
-			return CUTILS_NOMEM;
-		}
-		str->str = tmp;
-		str->capacity = str->len+x->len+1;
+	int err = cutilsStringResize(str, str->len+x->len);
+	if(err != CUTILS_OK){
+		return err;
 	}
 
 	memcpy(str+str->len, x, x->len);
 	str->len += x->len;
-	str->str[str->len] = '\0';
 
 	return CUTILS_OK;
 }
@@ -145,13 +132,9 @@ int cutilsStringInsertChar(cutilsString *str, char x, size_t index){
 		return CUTILS_OUT_OF_BOUNDS;
 	}
 
-	if(str->len+1 >= str->capacity){
-		char *tmp = realloc(str->str, str->len+2);
-		if(tmp == NULL){
-			return CUTILS_NOMEM;
-		}
-		str->str = tmp;
-		str->capacity = str->len+2;
+	int err = cutilsStringResize(str, str->len+1);
+	if(err != CUTILS_OK){
+		return err;
 	}
 
 	//move everything at index, till the end of the string including the null termiantor by 1
@@ -168,14 +151,9 @@ int cutilsStringInsertCStr(cutilsString *str, const char *x, size_t index){
 	}
 
 	size_t xLen = strlen(x);
-
-	if(str->len+xLen >= str->capacity){
-		char *tmp = realloc(str->str, str->len+xLen+1);
-		if(tmp == NULL){
-			return CUTILS_NOMEM;
-		}
-		str->str = tmp;
-		str->capacity = str->len+xLen+1;
+	int err = cutilsStringResize(str, str->len+xLen);
+	if(err != CUTILS_OK){
+		return err;
 	}
 
 	memmove(str->str+index+xLen, str->str+index, str->len+1-index);
@@ -190,13 +168,9 @@ int cutilsStringInsertString(cutilsString *str, const cutilsString *x, size_t in
 		return CUTILS_OUT_OF_BOUNDS;
 	}
 
-	if(str->len+x->len >= str->capacity){
-		char *tmp = realloc(str->str, str->len+x->len+1);
-		if(tmp == NULL){
-			return CUTILS_NOMEM;
-		}
-		str->str = tmp;
-		str->capacity = str->len+x->len+1;
+	int err = cutilsStringResize(str, str->len+x->len);
+	if(err != CUTILS_OK){
+		return err;
 	}
 
 	memmove(str->str+index+x->len, str->str+index, str->len+1-index);
@@ -207,54 +181,35 @@ int cutilsStringInsertString(cutilsString *str, const cutilsString *x, size_t in
 }
 
 int cutilsStringSetChar(cutilsString *str, char x){
-	//2 to account for null temrinator
-	if(2 >= str->capacity){
-		char *tmp = realloc(str->str, 2);
-		if(tmp == NULL){
-			return CUTILS_NOMEM;
-		}
-		str->str = tmp;
-		str->capacity = 2;
+	int err = cutilsStringResize(str, 1);
+	if(err != CUTILS_OK){
+		return err;
 	}
 
 	str->str[0] = x;
-	str->str[1] = '\0';
-	str->len = 1;
 
 	return CUTILS_OK;
 }
 
 int cutilsStringSetCStr(cutilsString *str, const char *x){
 	size_t xLen = strlen(x);
-	if(xLen >= str->capacity){
-		char *tmp = realloc(str->str, xLen+1);
-		if(tmp == NULL){
-			return CUTILS_NOMEM;
-		}
-		str->str = tmp;
-		str->capacity = xLen+1;
+	int err = cutilsStringResize(str, xLen);
+	if(err != CUTILS_OK){
+		return err;
 	}
 
 	memcpy(str->str, x, xLen);
-	str->str[xLen] = '\0';
-	str->len = xLen;
 
 	return CUTILS_OK;
 }
 
 int cutilsStringSetString(cutilsString *str, const cutilsString *x){
-	if(x->len >= str->capacity){
-		char *tmp = realloc(str->str, x->len+1);
-		if(tmp == NULL){
-			return CUTILS_NOMEM;
-		}
-		str->str = tmp;
-		str->capacity = x->len+1;
+	int err = cutilsStringResize(str, x->len);
+	if(err != CUTILS_OK){
+		return err;
 	}
 
 	memcpy(str->str, x->str, x->len);
-	str->str[x->len] = '\0';
-	str->len = x->len;
 
 	return CUTILS_OK;
 }

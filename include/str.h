@@ -25,7 +25,7 @@ void cutilsStringSwap(cutilsString *a, cutilsString *b);
 void cutilsStringFree(cutilsString *str);
 
 int cutilsStringResize(cutilsString *str, size_t len);
-int cutilsStringResizeChar(cutilsString *str, size_t len, char c);
+int cutilsStringResizeRepeat(cutilsString *str, size_t len, char c);
 int cutilsStringReserve(cutilsString *str, size_t capcity);
 
 int cutilsStringAppendChar(cutilsString *str, char x);
