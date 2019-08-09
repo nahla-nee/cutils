@@ -6,12 +6,15 @@
 #include <stdlib.h>
 
 #include "errors.h"
+#include "dynArray.h"
 
 typedef struct cutilsString{
 	char *str;
 	size_t len;
 	size_t capacity;
 } cutilsString;
+
+CUTILS_DEF_DYNARRAY(cutilsString, cutislStringArr);
 
 /*
 preallocates memory for the string, if successful it will have len bytes to hold chars in
