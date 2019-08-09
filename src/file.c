@@ -91,28 +91,18 @@ int cutilsFileReadBytesIndex(cutilsFile *file, cutilsByteStream *stream, size_t 
 		return CUTILS_OUT_OF_BOUNDS;
 	}
 
-	int err;
-
-	//read to a temporary buffer first in case the read fails, if success then copy the data
-	cutilsByteStream tmp;
-	err = cutilsByteStreamInit(&tmp, bytes);
-	if(err != CUTILS_OK){
-		return err;
-	}
-	size_t bytesRead = fread(tmp.stream, 1, bytes, file->file);
-	if(bytesRead != bytes){
-		return CUTILS_BAD_READ;
-	}
-
 	if(bytes > (stream->size-index)){
-		err = cutilsByteStreamResize(stream, bytes+stream->size);
+		int err = cutilsByteStreamResize(stream, bytes+stream->size);
 		if(err != CUTILS_OK){
 			return err;
 		}
 	}
 	memmove(stream->stream+index+bytes, stream->stream+index, bytes);
-	memcpy(stream->stream+index, tmp.stream, bytes);
-	cutilsByteStreamFree(&tmp);
+
+	size_t bytesRead = fread(stream->stream+index, 1, bytes, file->file);
+	if(bytesRead != bytes){
+		return CUTILS_BAD_READ;
+	}
 
 	return CUTILS_OK;
 }
