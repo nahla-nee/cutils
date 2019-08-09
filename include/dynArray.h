@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "errors.h"
 
@@ -121,7 +122,6 @@
 		return CUTILS_OK;\
 	}
 
-#ifndef CUTILS_NO_DYNARR_DEFS
 CUTILS_DEF_DYNARRAY(char, charArr);
 CUTILS_DEF_DYNARRAY(unsigned char, ucharArr);
 CUTILS_DEF_DYNARRAY(signed char, scharArr);
@@ -136,6 +136,7 @@ CUTILS_DEF_DYNARRAY(unsigned long long, ullongArr);
 CUTILS_DEF_DYNARRAY(float, floatArr);
 CUTILS_DEF_DYNARRAY(double, doubleArr);
 CUTILS_DEF_DYNARRAY(long double, ldoubleArr);
+CUTILS_DEF_DYNARRAY(size_t, sizeArr);
 
 #ifdef INT8_MAX
 CUTILS_DEF_DYNARRAY(int8_t, int8Arr);
@@ -167,8 +168,6 @@ CUTILS_DEF_DYNARRAY(int64_t, int64Arr);
 
 #ifdef UINT64_MAX
 CUTILS_DEF_DYNARRAY(uint64_t, uint64Arr);
-#endif
-
 #endif
 
 #endif
