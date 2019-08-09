@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <stdint.h>
+
 #include "errors.h"
 
 #define CUTILS_DEF_DYNARRAY(TYPE, NAME)\
@@ -29,6 +31,8 @@
 			return CUTILS_NOMEM;\
 		}\
 		arr->size = size;\
+\
+		return CUTILS_OK;\
 	}\
 \
 	int NAME##Copy(NAME *dst, NAME *src){\
@@ -42,6 +46,8 @@
 		dst->size = src->size;\
 		dst->capacity = dst->size;\
 		memcpy(dst->data, src->data, sizeof(TYPE)*dst->size);\
+\
+		return CUTILS_OK;\
 	}\
 \
 	void NAME##Move(NAME *dst, NAME *src){\
@@ -61,7 +67,7 @@
 		arr->size = arr->capacity = 0;\
 	}\
 \
-	int NAM##Resize(NAME *arr, size_t size){\
+	int NAME##Resize(NAME *arr, size_t size){\
 		if(size <= arr->capacity){\
 			arr->size = size;\
 			return CUTILS_OK;\
@@ -91,27 +97,21 @@
 	}\
 \
 	int NAME##PushBack(NAME *arr, TYPE x){\
-		if(arr->size == capacity){\
-			TYPE *tmp = realloc(arr->data, sizeof(TYPE)*arr->size+1);\
-			if(tmp == NULL){\
-				return CUTILS_NOMEM;\
-			}\
-			arr->data = tmp;\
-			arr->capacity++;\
+		int err = NAME##Resize(arr, arr->size+1);\
+		if(err != CUTILS_OK){\
+			return err;\
 		}\
+\
 		arr->data[arr->size] = x;\
 		arr->size++;\
 		return CUTILS_OK;\
 	}\
 	int NAME##Insert(NAME *arr, TYPE x, size_t index){\
-		if(arr->size == capacity){\
-			TYPE *tmp = realloc(arr->data, sizeof(TYPE)*arr->size+1);\
-			if(tmp == NULL){\
-				return CUTILS_NOMEM;\
-			}\
-			arr->data = tmp;\
-			arr->capacity++;\
+		int err = NAME##Resize(arr, arr->size+1);\
+		if(err != CUTILS_OK){\
+			return err;\
 		}\
+\
 		/*this function can act the same as PushBack if index == arr->size*/\
 		if(index != arr->size){\
 			memmove(arr->data+index, arr->data+index+1, sizeof(TYPE)*(arr->size-index));\
@@ -120,5 +120,55 @@
 		arr->size++;\
 		return CUTILS_OK;\
 	}
+
+#ifndef CUTILS_NO_DYNARR_DEFS
+CUTILS_DEF_DYNARRAY(char, charArr);
+CUTILS_DEF_DYNARRAY(unsigned char, ucharArr);
+CUTILS_DEF_DYNARRAY(signed char, scharArr);
+CUTILS_DEF_DYNARRAY(short, shortArr);
+CUTILS_DEF_DYNARRAY(unsigned short, ushortArry);
+CUTILS_DEF_DYNARRAY(int, intArr);
+CUTILS_DEF_DYNARRAY(unsigned int, uintArr);
+CUTILS_DEF_DYNARRAY(long, longArr);
+CUTILS_DEF_DYNARRAY(unsigned long, ulongArr);
+CUTILS_DEF_DYNARRAY(long long, llongArr);
+CUTILS_DEF_DYNARRAY(unsigned long long, ullongArr);
+CUTILS_DEF_DYNARRAY(float, floatArr);
+CUTILS_DEF_DYNARRAY(double, doubleArr);
+CUTILS_DEF_DYNARRAY(long double, ldoubleArr);
+
+#ifdef INT8_MAX
+CUTILS_DEF_DYNARRAY(int8_t, int8Arr);
+#endif
+
+#ifdef UINT8_MAX
+CUTILS_DEF_DYNARRAY(uint8_t, uint8Arr)
+#endif
+
+#ifdef INT16_MAX
+CUTILS_DEF_DYNARRAY(int16_t, int16Arr);
+#endif
+
+#ifdef UINT16_MAX
+CUTILS_DEF_DYNARRAY(uint16_t, uint16Arr);
+#endif
+
+#ifdef INT32_MAX
+CUTILS_DEF_DYNARRAY(int32_t, int32Arr);
+#endif
+
+#ifdef UINT32_MAX
+CUTILS_DEF_DYNARRAY(uint32_t, uint32Arr);
+#endif
+
+#ifdef INT64_MAX
+CUTILS_DEF_DYNARRAY(int64_t, int64Arr);
+#endif
+
+#ifdef UINT64_MAX
+CUTILS_DEF_DYNARRAY(uint64_t, uint64Arr);
+#endif
+
+#endif
 
 #endif
