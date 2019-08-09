@@ -2,6 +2,7 @@
 #define CUTILS_BYTESTREAM_H
 
 #include "errors.h"
+#include "dynArray.h"
 
 #include <stddef.h>
 #include <string.h>
@@ -14,6 +15,8 @@ typedef struct cutilsByteStream{
 	size_t size;
 	size_t capacity;
 } cutilsByteStream;
+
+CUTILS_DEF_DYNARRAY(cutilsByteStream, cutilsByteStreamArr);
 
 int cutilsByteStreamInit(cutilsByteStream *stream, size_t capacity);
 int cutilsByteStreamCopy(cutilsByteStream *dst, cutilsByteStream *src);
