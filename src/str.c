@@ -1,5 +1,7 @@
 #include "str.h"
 
+CUTILS_DEF_DYNARRAY_C(cutilsString, cutilsStringArr);
+
 int cutilsStringInit(cutilsString *str, size_t capacity){
 	if(capacity == 0){
 		memset(str, 0, sizeof(cutilsString));

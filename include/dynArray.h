@@ -10,7 +10,7 @@
 
 #include "errors.h"
 
-#define CUTILS_DEF_DYNARRAY(TYPE, NAME)\
+#define CUTILS_DEF_DYNARRAY_H(TYPE, NAME)\
 	typedef struct NAME{\
 		TYPE *data;\
 		size_t size;\
@@ -25,7 +25,8 @@
 	int NAME##Reserve(NAME *arr, size_t capacity);\
 	int NAME##PushBack(NAME *arr, TYPE x);\
 	int NAME##Insert(NAME *arr, TYPE x, size_t index);\
-\
+
+#define CUTILS_DEF_DYNARRAY_C(TYPE, NAME)\
 	int NAME##Init(NAME *arr, size_t size){\
 		arr->data = malloc(sizeof(TYPE)*size);\
 		if(arr->data == NULL){\

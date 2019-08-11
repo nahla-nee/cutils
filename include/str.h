@@ -14,7 +14,7 @@ typedef struct cutilsString{
 	size_t capacity;
 } cutilsString;
 
-CUTILS_DEF_DYNARRAY(cutilsString, cutislStringArr);
+CUTILS_DEF_DYNARRAY_H(cutilsString, cutilsStringArr);
 
 /*
 preallocates memory for the string, if successful it will have len bytes to hold chars in

@@ -1,5 +1,7 @@
 #include "bytestream.h"
 
+CUTILS_DEF_DYNARRAY_C(cutilsByteStream, cutilsByteStreamArr);
+
 int cutilsByteStreamInit(cutilsByteStream *stream, size_t capacity){
 	if(capacity == 0){
 		memset(stream, 0, sizeof(cutilsByteStream));

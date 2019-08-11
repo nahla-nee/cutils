@@ -16,7 +16,7 @@ typedef struct cutilsByteStream{
 	size_t capacity;
 } cutilsByteStream;
 
-CUTILS_DEF_DYNARRAY(cutilsByteStream, cutilsByteStreamArr);
+CUTILS_DEF_DYNARRAY_H(cutilsByteStream, cutilsByteStreamArr);
 
 int cutilsByteStreamInit(cutilsByteStream *stream, size_t capacity);
 int cutilsByteStreamCopy(cutilsByteStream *dst, cutilsByteStream *src);
