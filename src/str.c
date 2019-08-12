@@ -3,11 +3,6 @@
 CUTILS_DEF_DYNARRAY_C(cutilsString, cutilsStringArr);
 
 int cutilsStringInit(cutilsString *str, size_t capacity){
-	if(capacity == 0){
-		memset(str, 0, sizeof(cutilsString));
-		return CUTILS_OK;
-	}
-
 	//allocate one more byte for null terminator
 	str->str = calloc(capacity+1, 1);
 	if(str->str == NULL){
