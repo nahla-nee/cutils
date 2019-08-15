@@ -25,11 +25,13 @@ typedef struct cutilsFile{
 	bool open;
 } cutilsFile;
 
+void cutilsFileInit(cutilsFile *file);
 int cutilsFileOpen(cutilsFile *file, const char *filepath, const char *filemode);
 int cutilsFileCopy(cutilsFile *dst, cutilsFile *src);
 void cutilsFileMove(cutilsFile *dst, cutilsFile *src);
 void cutilsFileSwap(cutilsFile *a, cutilsFile *b);
 void cutilsFileClose(cutilsFile *file);
+void cutilsFileFree(cutilsFile *file);
 
 int cutilsFileRead(cutilsFile *file, cutilsByteStream *stream);
 int cutilsFileReadIndex(cutilsFile *file, cutilsByteStream *stream, size_t index);

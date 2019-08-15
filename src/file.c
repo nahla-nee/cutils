@@ -1,10 +1,13 @@
 #include "file.h"
 
-int cutilsFileOpen(cutilsFile *file, const char *filepath, const char *filemode){
-	cutilsStringInit(&file->path, 0);
-	cutilsStringSet(&file->path, filepath);
+void cutilsFileInit(cutilsFile *file){
+	file->file = NULL;
+	cutilsStringInit(file->path, 0);
+	cutilsStringInit(file->mode, 0);
+}
 
-	cutilsStringInit(&file->mode, 0);
+int cutilsFileOpen(cutilsFile *file, const char *filepath, const char *filemode){
+	cutilsStringSet(&file->path, filepath);
 	cutilsStringSet(&file->mode, filemode);
 
 	if(strstr(filemode, "+") != NULL){
@@ -69,9 +72,16 @@ void cutilsFileSwap(cutilsFile *a, cutilsFile *b){
 
 void cutilsFileClose(cutilsFile *file){
 	fclose(file->file);
+	file->file = NULL;
+	cutilsStringSet(&file->path, "");
+	cutilsStringSet(&file->mode, "");
+}
+
+void cutilsFileFree(cutilsFile *file){
+	fclose(file->file);
+	file->file = NULL;
 	cutilsStringFree(&file->path);
 	cutilsStringFree(&file->mode);
-	memset(file, 0, sizeof(cutilsFile));
 }
 
 int cutilsFileRead(cutilsFile *file, cutilsByteStream *stream){
