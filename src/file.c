@@ -2,8 +2,8 @@
 
 void cutilsFileInit(cutilsFile *file){
 	file->file = NULL;
-	cutilsStringInit(file->path, 0);
-	cutilsStringInit(file->mode, 0);
+	cutilsStringInit(&file->path, 0);
+	cutilsStringInit(&file->mode, 0);
 }
 
 cutilsFile* cutilsFileNew(){
