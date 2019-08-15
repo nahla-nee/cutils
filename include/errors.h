@@ -7,5 +7,8 @@
 #define CUTILS_FOPEN 3
 #define CUTILS_BAD_READ 4
 #define CUTILS_BAD_WRITE 5
+#define CUTILS_GETADDRINFO 6
+#define CUTILS_SOCKET 7
+#define CUTILS_LISTEN 8
 
 #endif
