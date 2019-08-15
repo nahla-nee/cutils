@@ -20,11 +20,14 @@
 	int NAME##Init(NAME *arr, size_t size);\
 	int NAME##Copy(NAME *dst, NAME *src);\
 	void NAME##Move(NAME *dst, NAME *src);\
+	void NAME##Swap(NAME *a, NAME *b);\
 	void NAME##Free(NAME *arr);\
 	int NAME##Resize(NAME *arr, size_t size);\
 	int NAME##Reserve(NAME *arr, size_t capacity);\
 	int NAME##PushBack(NAME *arr, TYPE x);\
 	int NAME##Insert(NAME *arr, TYPE x, size_t index);\
+	int NAME##InsertPtr(NAME *arr, TYPE *x, size_t len, size_t index);\
+	int NAME##InsertArr(NAME *arr, NAME *x, size_t index);\
 
 #define CUTILS_DEF_DYNARRAY_C(TYPE, NAME)\
 	int NAME##Init(NAME *arr, size_t size){\
@@ -116,11 +119,40 @@
 \
 		/*this function can act the same as PushBack if index == arr->size*/\
 		if(index != arr->size){\
-			memmove(arr->data+index, arr->data+index+1, sizeof(TYPE)*(arr->size-index));\
+			memmove(arr->data+index+1, arr->data+index, sizeof(TYPE)*(arr->size-index));\
 		}\
 		arr->data[index] = x;\
 		arr->size++;\
+\
 		return CUTILS_OK;\
-	}
+	}\
+	int NAME##InsertPtr(NAME *arr, TYPE *x, size_t len, size_t index){\
+		int err = NAME##Resize(arr, arr->size+len);\
+		if(err != CUTILS_OK){\
+			return err;\
+		}\
+\
+		if(index != arr->size){\
+			memmove(arr->data+index+len, arr->data+index, sizeof(TYPE)*(arr->size-index));\
+		}\
+		memcpy(arr->data+index, x, sizeof(TYPE)*len);\
+		arr->size += len;\
+\
+		return CUTILS_OK;\
+	}\
+	int NAME##InsertArr(NAME *arr, NAME *x, size_t index){\
+		int err = NAME##Resize(arr, arr->size+x->size);\
+		if(err != CUTILS_OK){\
+			return err;\
+		}\
+\
+		if(index != arr->size){\
+			memmove(arr->data+index+x->size, arr->data+index, sizeof(TYPE)*(arr->size-index));\
+		}\
+		memcpy(arr->data+index, x, sizeof(TYPE)*x->size);\
+		arr->size += x->size;\
+\
+		return CUTILS_OK;\
+	}\
 
 #endif
