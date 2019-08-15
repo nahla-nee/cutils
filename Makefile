@@ -1,6 +1,6 @@
-SRCS = src/str.c src/bytestream.c src/file.c src/cliOptions.c
+SRCS = src/str.c src/bytestream.c src/file.c src/cliOptions.c src/tcpClient.c src/tcpServer.c
 INCLUDE = -Iinclude/
-FLAGS = -std=c11 -O2 -fpic -c -D_FILE_OFFSET_BITS=64
+FLAGS = -O2 -fpic -c -D_FILE_OFFSET_BITS=64
 
 .PHONY: .clean
 .clean:
