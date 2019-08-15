@@ -97,9 +97,9 @@ int cutilsFileReadBytesIndex(cutilsFile *file, cutilsByteStream *stream, size_t 
 			return err;
 		}
 	}
-	memmove(stream->stream+index+bytes, stream->stream+index, bytes);
+	memmove(stream->data+index+bytes, stream->data+index, bytes);
 
-	size_t bytesRead = fread(stream->stream+index, 1, bytes, file->file);
+	size_t bytesRead = fread(stream->data+index, 1, bytes, file->file);
 	if(bytesRead != bytes){
 		return CUTILS_BAD_READ;
 	}
@@ -120,7 +120,7 @@ int cutilsFileWriteBytes(cutilsFile *file, cutilsByteStream *stream, size_t byte
 }
 
 int cutilsFileWriteBytesIndex(cutilsFile *file, cutilsByteStream *stream, size_t bytes, size_t index){
-	size_t bytesWritten = fwrite(stream->stream, 1, bytes, file->file);
+	size_t bytesWritten = fwrite(stream->data, 1, bytes, file->file);
 	if(bytesWritten != bytes){
 		return CUTILS_BAD_WRITE;
 	}
