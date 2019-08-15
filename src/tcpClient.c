@@ -4,7 +4,7 @@ int cutilsTcpClientInit(cutilsTcpClient *client, const char *node, const char *s
 	client->sockfd = -1;
 	char server[INET6_ADDRSTRLEN];
 
-	int err =cutilsStringInit(&client->server, INET6_ADDRSTRLEN);
+	int err = cutilsStringInit(&client->server, INET6_ADDRSTRLEN);
 	if(err != CUTILS_OK){
 		return err;
 	}
