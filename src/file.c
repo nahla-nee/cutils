@@ -6,6 +6,15 @@ void cutilsFileInit(cutilsFile *file){
 	cutilsStringInit(file->mode, 0);
 }
 
+cutilsFile* cutilsFileNew(){
+	cutilsFile *ret = malloc(sizeof(cutilsFile));
+	if(ret == NULL){
+		return NULL;
+	}
+	cutilsFileInit(ret);
+	return ret;
+}
+
 int cutilsFileOpen(cutilsFile *file, const char *filepath, const char *filemode){
 	cutilsStringSet(&file->path, filepath);
 	cutilsStringSet(&file->mode, filemode);

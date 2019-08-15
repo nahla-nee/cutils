@@ -21,7 +21,7 @@ preallocates memory for the string, if successful it will have len bytes to hold
 if len is 0 then this function will just zero out the struct and return
 */
 int cutilsStringInit(cutilsString *str, size_t capacity);
-
+cutilsString* cutilsStringNew(size_t capacity);
 int cutilsStringCopy(cutilsString *dst, cutilsString *src);
 void cutilsStringMove(cutilsString *dst, cutilsString *src);
 void cutilsStringSwap(cutilsString *a, cutilsString *b);

@@ -18,6 +18,7 @@
 	} NAME;\
 \
 	int NAME##Init(NAME *arr, size_t size);\
+	NAME* NAME##New(size_t size);\
 	int NAME##Copy(NAME *dst, NAME *src);\
 	void NAME##Move(NAME *dst, NAME *src);\
 	void NAME##Swap(NAME *a, NAME *b);\
@@ -38,6 +39,15 @@
 		arr->size = size;\
 \
 		return CUTILS_OK;\
+	}\
+\
+	NAME* NAME##New(size_t size){\
+		NAME *ret = malloc(sizeof(NAME));\
+		if(ret == NULL){\
+			return NULL;\
+		}\
+		NAME##Init(ret, size);\
+		return ret;\
 	}\
 \
 	int NAME##Copy(NAME *dst, NAME *src){\

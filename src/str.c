@@ -13,6 +13,15 @@ int cutilsStringInit(cutilsString *str, size_t capacity){
 	return CUTILS_OK;
 }
 
+cutilsString* cutilsStringNew(size_t capacity){
+	cutilsString *ret = malloc(sizeof(cutilsString));
+	if(ret == NULL){
+		return NULL;
+	}
+	cutilsStringInit(ret, capacity);
+	return ret;
+}
+
 int cutilsStringCopy(cutilsString *dst, cutilsString *src){
 	char *tmp = malloc(src->len);
 	if(tmp == NULL){

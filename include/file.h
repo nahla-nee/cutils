@@ -26,6 +26,7 @@ typedef struct cutilsFile{
 } cutilsFile;
 
 void cutilsFileInit(cutilsFile *file);
+cutilsFile* cutilsFileNew();
 int cutilsFileOpen(cutilsFile *file, const char *filepath, const char *filemode);
 int cutilsFileCopy(cutilsFile *dst, cutilsFile *src);
 void cutilsFileMove(cutilsFile *dst, cutilsFile *src);
