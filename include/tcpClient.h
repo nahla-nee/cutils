@@ -21,6 +21,7 @@ typedef struct cutilsTcpClient{
 } cutilsTcpClient;
 
 int cutilsTcpClientInit(cutilsTcpClient *client);
+cutilsTcpClient* cutilsTcpClientNew();
 void cutilsTcpClientFree(cutilsTcpClient *client);
 
 int cutilsTcPClientConnect(cutilsTcpClient *client, const char *node, const char *service);

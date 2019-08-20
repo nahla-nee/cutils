@@ -15,6 +15,18 @@ int cutilsTcpClientInit(cutilsTcpClient *client){
 	return CUTILS_OK;
 }
 
+cutilsTcpClient* cutilsTcpClientNew(){
+	cutilsTcpClient *ret = malloc(sizeof(cutilsTcpClient));
+	if(ret == NULL){
+		return NULL;
+	}
+	if(cutilsTcpClientInit(ret) != CUTILS_OK){
+		free(ret);
+		return NULL;
+	}
+	return ret;
+}
+
 void cutilsTcpClientFree(cutilsTcpClient *client){
 	cutilsTcpClientDisconnect(client);
 	cutilsStringFree(&client->server);
