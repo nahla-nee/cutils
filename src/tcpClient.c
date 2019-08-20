@@ -1,13 +1,13 @@
 #include "tcpClient.h"
 
-int cutilsTcpClientInit(cutilsTcpClient *client){
+int cutilsTcpClientInit(cutilsTcpClient *client, size_t bufferSize){
 	client->sockfd = -1;
 	int err = cutilsStringInit(&client->server, INET6_ADDRSTRLEN);
 	if(err != CUTILS_OK){
 		return err;
 	}
 
-	err = cutilsByteStreamInit(&client->buffer, CUTILS_TCP_CLIENT_BUFFER_SIZE);
+	err = cutilsByteStreamInit(&client->buffer, bufferSize);
 	if(err != CUTILS_OK){
 		return err;
 	}
@@ -15,12 +15,12 @@ int cutilsTcpClientInit(cutilsTcpClient *client){
 	return CUTILS_OK;
 }
 
-cutilsTcpClient* cutilsTcpClientNew(){
+cutilsTcpClient* cutilsTcpClientNew(size_t bufferSize){
 	cutilsTcpClient *ret = malloc(sizeof(cutilsTcpClient));
 	if(ret == NULL){
 		return NULL;
 	}
-	if(cutilsTcpClientInit(ret) != CUTILS_OK){
+	if(cutilsTcpClientInit(ret, bufferSize) != CUTILS_OK){
 		free(ret);
 		return NULL;
 	}

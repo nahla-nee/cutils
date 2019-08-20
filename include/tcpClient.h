@@ -11,8 +11,6 @@
 #include "str.h"
 #include "bytestream.h"
 
-#define CUTILS_TCP_CLIENT_BUFFER_SIZE 1024
-
 typedef struct cutilsTcpClient{
 	int sockfd;
 
@@ -20,8 +18,8 @@ typedef struct cutilsTcpClient{
 	cutilsByteStream buffer;
 } cutilsTcpClient;
 
-int cutilsTcpClientInit(cutilsTcpClient *client);
-cutilsTcpClient* cutilsTcpClientNew();
+int cutilsTcpClientInit(cutilsTcpClient *client, size_t bufferSize);
+cutilsTcpClient* cutilsTcpClientNew(size_t bufferSize);
 void cutilsTcpClientFree(cutilsTcpClient *client);
 
 int cutilsTcPClientConnect(cutilsTcpClient *client, const char *node, const char *service);
