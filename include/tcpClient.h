@@ -20,7 +20,10 @@ typedef struct cutilsTcpClient{
 	cutilsByteStream buffer;
 } cutilsTcpClient;
 
-int cutilsTcpClientInit(cutilsTcpClient *client, const char *node, const char *service);
+int cutilsTcpClientInit(cutilsTcpClient *client);
 void cutilsTcpClientFree(cutilsTcpClient *client);
+
+int cutilsTcPClientConnect(cutilsTcpClient *client, const char *node, const char *service);
+void cutilsTcpClientDisconnect(cutilsTcpClient *client);
 
 #endif

@@ -1,17 +1,32 @@
 #include "tcpClient.h"
 
-int cutilsTcpClientInit(cutilsTcpClient *client, const char *node, const char *service){
+int cutilsTcpClientInit(cutilsTcpClient *client){
 	client->sockfd = -1;
-	char server[INET6_ADDRSTRLEN];
-
 	int err = cutilsStringInit(&client->server, INET6_ADDRSTRLEN);
 	if(err != CUTILS_OK){
 		return err;
 	}
+
 	err = cutilsByteStreamInit(&client->buffer, CUTILS_TCP_CLIENT_BUFFER_SIZE);
 	if(err != CUTILS_OK){
 		return err;
 	}
+
+	return CUTILS_OK;
+}
+
+void cutilsTcpClientFree(cutilsTcpClient *client){
+	cutilsTcpClientDisconnect(client);
+	cutilsStringFree(&client->server);
+	cutilsByteStreamFree(&client->buffer);
+}
+
+int cutilsTcpClientConnect(cutilsTcpClient *client, const char *node, const char *service){
+	if(client->sockfd != -1){
+		cutilsTcpClientDisconnect(client);
+	}
+
+	char server[INET6_ADDRSTRLEN];
 
 	struct addrinfo *res, hints;
 	memset(&hints, 0, sizeof(struct addrinfo));
@@ -44,13 +59,10 @@ int cutilsTcpClientInit(cutilsTcpClient *client, const char *node, const char *s
 	cutilsStringSet(&client->server, server);
 
 	freeaddrinfo(res);
-
 	return CUTILS_OK;
 }
 
-void cutilsTcpClientFree(cutilsTcpClient *client){
+void cutilsTcpClientDisconnect(cutilsTcpClient *client){
 	close(client->sockfd);
 	client->sockfd = -1;
-	cutilsStringFree(&client->server);
-	cutilsByteStreamFree(&client->buffer);
 }
