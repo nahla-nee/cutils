@@ -18,7 +18,12 @@ cutilsString* cutilsStringNew(size_t capacity){
 	if(ret == NULL){
 		return NULL;
 	}
-	cutilsStringInit(ret, capacity);
+
+	if(cutilsStringInit(ret, capacity) != CUTILS_OK){
+		free(ret);
+		return NULL;
+	}
+
 	return ret;
 }
 

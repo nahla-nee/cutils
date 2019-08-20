@@ -46,7 +46,10 @@
 		if(ret == NULL){\
 			return NULL;\
 		}\
-		NAME##Init(ret, size);\
+		if(NAME##Init(ret, size) != CUTILS_OK){\
+			free(ret);\
+			return NULL;\
+		}\
 		return ret;\
 	}\
 \
