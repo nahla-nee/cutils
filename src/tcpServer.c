@@ -48,6 +48,18 @@ int cutilsTcpServerInit(cutilsTcpServer *server, const char *service, int backlo
 	return CUTILS_OK;
 }
 
+cutilsTcpServer* cutilsTcPServerNew(const char *service, int backlog){
+	cutilsTcpServer *ret = malloc(sizeof(cutilsTcpServer));
+	if(ret == NULL){
+		return NULL;
+	}
+	if(cutilsTcpServerInit(ret, service, backlog) != CUTILS_OK){
+		free(ret);
+		return NULL;
+	}
+	return ret;
+}
+
 void cutilsTcpServerFree(cutilsTcpServer *server){
 	for(size_t i = 0; i < server->clients.size; i++){
 		close(server->clients.data[i].sockfd);
