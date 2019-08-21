@@ -139,7 +139,7 @@ int cutilsStringAppendString(cutilsString *str, cutilsString *x){
 }
 
 int cutilsStringInsertChar(cutilsString *str, char x, size_t index){
-	if(index >= str->len){
+	if(index > str->len){
 		return CUTILS_OUT_OF_BOUNDS;
 	}
 
@@ -157,7 +157,7 @@ int cutilsStringInsertChar(cutilsString *str, char x, size_t index){
 }
 
 int cutilsStringInsertCStr(cutilsString *str, const char *x, size_t index){
-	if(index >= str->len){
+	if(index > str->len){
 		return CUTILS_OUT_OF_BOUNDS;
 	}
 
@@ -175,7 +175,7 @@ int cutilsStringInsertCStr(cutilsString *str, const char *x, size_t index){
 }
 
 int cutilsStringInsertString(cutilsString *str, const cutilsString *x, size_t index){
-	if(index >= str->len){
+	if(index > str->len){
 		return CUTILS_OUT_OF_BOUNDS;
 	}
 
