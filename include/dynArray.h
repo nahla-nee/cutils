@@ -125,7 +125,7 @@
 		return CUTILS_OK;\
 	}\
 	int NAME##Insert(NAME *arr, TYPE x, size_t index){\
-		if(index > arr->size){\
+		if(index >= arr->size){\
 			return CUTILS_OUT_OF_BOUNDS;\
 		}\
 \
@@ -144,7 +144,7 @@
 		return CUTILS_OK;\
 	}\
 	int NAME##InsertPtr(NAME *arr, TYPE *x, size_t len, size_t index){\
-			if(index > arr->size){\
+			if(index >= arr->size){\
 			return CUTILS_OUT_OF_BOUNDS;\
 		}\
 \
@@ -162,7 +162,7 @@
 		return CUTILS_OK;\
 	}\
 	int NAME##InsertArr(NAME *arr, NAME *x, size_t index){\
-		if(index > arr->size){\
+		if(index >= arr->size){\
 			return CUTILS_OUT_OF_BOUNDS;\
 		}\
 \
