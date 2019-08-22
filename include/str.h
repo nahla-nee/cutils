@@ -43,6 +43,9 @@ int cutilsStringSetChar(cutilsString *str, char x);
 int cutilsStringSetCStr(cutilsString *str, const char *x);
 int cutilsStringSetString(cutilsString *str, const cutilsString *x);
 
+int cutilsStringDelete(cutilsString *str, size_t index);
+int cutilsStringDeleteRange(cutilsString *str, size_t start, size_t end);
+
 #define cutilsStringAppend(STR, X) _Generic((X),\
 		char: cutilsStringAppendChar,\
 		const char: cutilsStringAppendChar,\

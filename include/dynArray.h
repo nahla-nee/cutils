@@ -202,7 +202,7 @@
 		}\
 \
 		memmove(arr->data+start, arr->data+end+1, sizeof(TYPE)*(arr->size-end-1));\
-		NAME##Resize(arr, arr->size-(end-start)-1);
+		NAME##Resize(arr, arr->size-(end-start)-1);\
 \
 		return CUTILS_OK;\
 	}

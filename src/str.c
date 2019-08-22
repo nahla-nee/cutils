@@ -224,3 +224,30 @@ int cutilsStringSetString(cutilsString *str, const cutilsString *x){
 
 	return CUTILS_OK;
 }
+
+int cutilsStringDelete(cutilsString *str, size_t index){
+	if(index > str->len){
+		return CUTILS_OUT_OF_BOUNDS;
+	}
+
+	memmove(str->str+index, str->str+index+1, str->len+1-index);
+	str->len--;
+
+	return CUTILS_OK;
+}
+
+int cutilsStringDeleteRange(cutilsString *str, size_t start, size_t end){
+	if(start > str->len || end > str->len){
+		return CUTILS_OUT_OF_BOUNDS;
+	}
+
+	if(start == 0 && end == str->len){
+		cutilsStringResize(str, 0);
+		return CUTILS_OK;
+	}
+
+	memmove(str->str+start, str->str+end+1, str->len-end);
+	cutilsStringResize(str, str->len-(end-start)-1);
+
+	return CUTILS_OK;
+}
