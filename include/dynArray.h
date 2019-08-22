@@ -197,12 +197,12 @@
 		}\
 \
 		if(start == 0 && end == arr->size){\
-			arr->size = 0;\
+			NAME##Resize(arr, 0);\
 			return CUTILS_OK;\
 		}\
 \
 		memmove(arr->data+start, arr->data+end+1, sizeof(TYPE)*(arr->size-end-1));\
-		arr->size -= end-start-1;\
+		NAME##Resize(arr, arr->size-(end-start)-1);
 \
 		return CUTILS_OK;\
 	}
