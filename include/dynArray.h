@@ -185,14 +185,17 @@
 		if(index >= arr->size){\
 			return CUTILS_OUT_OF_BOUNDS;\
 		}\
+\
 		memmove(arr->data+index, arr->data+index+1, sizeof(TYPE)*(arr->size-index-1));\
 		arr->size--;\
+\
 		return CUTILS_OK;\
 	}\
 	int NAME##DeleteRange(NAME *arr, size_t start, size_t end){\
 		if(start >= arr->size || end >= arr->size){\
 			return CUTILS_OUT_OF_BOUNDS;\
 		}\
+\
 		if(start == 0 && end == arr->size){\
 			arr->size = 0;\
 			return CUTILS_OK;\
@@ -200,6 +203,7 @@
 \
 		memmove(arr->data+start, arr->data+end+1, sizeof(TYPE)*(arr->size-end-1));\
 		arr->size -= end-start-1;\
+\
 		return CUTILS_OK;\
 	}
 
