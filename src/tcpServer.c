@@ -71,3 +71,26 @@ void cutilsTcpServerFree(cutilsTcpServer *server){
 	close(server->sockfd);
 	server->sockfd = -1;
 }
+
+int cutilsTcpServerAccept(cutilsTcpServer *server, size_t bufferSize){
+	cutilsTcpServerClient newClient;
+	newClient.sockfd = accept(server->sockfd, &client.address, sizeof(struct sockaddr_storage));
+	if(newClient.sockfd == -1){
+		return CUTILS_ACCEPT;
+	}
+
+	int err = cutilsByteStreamInit(&newClient.buffer, bufferSize);
+	if(err != CUTILS_OK){
+		close(newClient.sockfd);
+		return err;
+	}
+
+	err = cutilsTcpServerClientArrPushBack(&server->clients, newClient);
+	if(err != CUTILS_OK){
+		close(newClient.sockfd);
+		cutilsByteStreamFree(&newClient.buffer);
+		return err;
+	}
+
+	return CUTILS_OK;
+}

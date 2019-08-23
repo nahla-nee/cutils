@@ -16,7 +16,7 @@
 typedef struct cutilsTcpServerClient{
 	int sockfd;
 
-	cutilsString address;
+	struct sockaddr_storage address;
 	cutilsByteStream buffer;
 } cutilsTcpServerClient;
 
@@ -32,5 +32,7 @@ typedef struct cutilsTcpServer{
 int cutilsTcpServerInit(cutilsTcpServer *server, const char *service, int backlog);
 cutilsTcpServer* cutilsTcPServerNew(const char *service, int backlog);
 void cutilsTcpServerFree(cutilsTcpServer *server);
+
+int cutilsTcpServerAccept(cutilsTcpServer *server, size_t bufferSize);
 
 #endif

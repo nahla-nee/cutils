@@ -10,5 +10,6 @@
 #define CUTILS_GETADDRINFO 6
 #define CUTILS_SOCKET 7
 #define CUTILS_LISTEN 8
+#define CUTILS_ACCEPT 9
 
 #endif
