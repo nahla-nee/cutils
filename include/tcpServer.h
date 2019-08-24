@@ -17,6 +17,7 @@ typedef struct cutilsTcpServerClient{
 	int sockfd;
 
 	struct sockaddr_storage address;
+	socklen_t addressSize;
 	cutilsByteStream buffer;
 } cutilsTcpServerClient;
 
