@@ -38,6 +38,7 @@
 		if(arr->data == NULL){\
 			return CUTILS_NOMEM;\
 		}\
+		arr->capacity = size;\
 		arr->size = size;\
 \
 		return CUTILS_OK;\
