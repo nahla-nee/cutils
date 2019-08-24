@@ -23,7 +23,7 @@ int cutilsTcpServerInit(cutilsTcpServer *server, const char *service, int backlo
 	while(p != NULL){
 		if((server->sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) != -1){
 			if(setsockopt(server->sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) != -1){
-				if(bind(server->sockfd, p->ai_addr, p->ai_addrlen) == -1){
+				if(bind(server->sockfd, p->ai_addr, p->ai_addrlen) != -1){
 					break;
 				}
 				else{
