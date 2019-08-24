@@ -39,7 +39,7 @@
 			return CUTILS_NOMEM;\
 		}\
 		arr->capacity = size;\
-		arr->size = size;\
+		arr->size = 0;\
 \
 		return CUTILS_OK;\
 	}\
