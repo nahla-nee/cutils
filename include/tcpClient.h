@@ -22,7 +22,7 @@ int cutilsTcpClientInit(cutilsTcpClient *client, size_t bufferSize);
 cutilsTcpClient* cutilsTcpClientNew(size_t bufferSize);
 void cutilsTcpClientFree(cutilsTcpClient *client);
 
-int cutilsTcPClientConnect(cutilsTcpClient *client, const char *node, const char *service);
+int cutilsTcpClientConnect(cutilsTcpClient *client, const char *node, const char *service);
 void cutilsTcpClientDisconnect(cutilsTcpClient *client);
 
 #endif
