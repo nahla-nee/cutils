@@ -6,7 +6,12 @@ FLAGS = -O2 -fpic -c -D_FILE_OFFSET_BITS=64
 .clean:
 	rm out/*
 
-default:
+cutils:
 	cc ${FLAGS} ${SRCS} ${INCLUDE}
+	mv *.o out
+	cc -shared -o libcutils.so out/*.o
+
+cutilsDebug:
+	cc ${FLAGS} -g ${SRCS} ${INCLUDE}
 	mv *.o out
 	cc -shared -o libcutils.so out/*.o
