@@ -84,8 +84,7 @@
 \
 	void NAME##Free(NAME *arr){\
 		free(arr->data);\
-		arr->data = NULL;\
-		arr->size = arr->capacity = 0;\
+		memset(arr, 0, sizeof(NAME));
 	}\
 \
 	int NAME##Resize(NAME *arr, size_t size){\
