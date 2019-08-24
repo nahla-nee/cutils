@@ -5,7 +5,11 @@ CUTILS_DEF_DYNARRAY_C(cutilsTcpServerClient, cutilsTcpServerClientArr);
 int cutilsTcpServerInit(cutilsTcpServer *server, const char *service, int backlog){
 	server->backlog = backlog;
 	server->sockfd = -1;
+	
 	int err = cutilsTcpServerClientArrInit(&server->clients, 0);
+	if(err != CUTILS_OK){
+		return err;
+	}
 
 	int yes = 1;
 
