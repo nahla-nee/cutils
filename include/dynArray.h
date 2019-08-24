@@ -122,8 +122,7 @@
 			return err;\
 		}\
 \
-		arr->data[arr->size] = x;\
-		arr->size++;\
+		arr->data[arr->size-1] = x;\
 		return CUTILS_OK;\
 	}\
 	int NAME##Insert(NAME *arr, TYPE x, size_t index){\
@@ -131,17 +130,17 @@
 			return CUTILS_OUT_OF_BOUNDS;\
 		}\
 \
+		size_t oldSize = arr->size;\
 		int err = NAME##Resize(arr, arr->size+1);\
 		if(err != CUTILS_OK){\
 			return err;\
 		}\
 \
 		/*this function can act the same as PushBack if index == arr->size*/\
-		if(index != arr->size){\
-			memmove(arr->data+index+1, arr->data+index, sizeof(TYPE)*(arr->size-index));\
+		if(index != oldSize){\
+			memmove(arr->data+index+1, arr->data+index, sizeof(TYPE)*(oldSize-index));\
 		}\
 		arr->data[index] = x;\
-		arr->size++;\
 \
 		return CUTILS_OK;\
 	}\
@@ -150,16 +149,16 @@
 			return CUTILS_OUT_OF_BOUNDS;\
 		}\
 \
+		size_t oldSize = arr->size;\
 		int err = NAME##Resize(arr, arr->size+len);\
 		if(err != CUTILS_OK){\
 			return err;\
 		}\
 \
-		if(index != arr->size){\
-			memmove(arr->data+index+len, arr->data+index, sizeof(TYPE)*(arr->size-index));\
+		if(index != oldSize){\
+			memmove(arr->data+index+len, arr->data+index, sizeof(TYPE)*(oldSize-index));\
 		}\
 		memcpy(arr->data+index, x, sizeof(TYPE)*len);\
-		arr->size += len;\
 \
 		return CUTILS_OK;\
 	}\
@@ -168,16 +167,16 @@
 			return CUTILS_OUT_OF_BOUNDS;\
 		}\
 \
+		size_t oldSize = arr->size;\
 		int err = NAME##Resize(arr, arr->size+x->size);\
 		if(err != CUTILS_OK){\
 			return err;\
 		}\
 \
-		if(index != arr->size){\
-			memmove(arr->data+index+x->size, arr->data+index, sizeof(TYPE)*(arr->size-index));\
+		if(index != oldSize){\
+			memmove(arr->data+index+x->size, arr->data+index, sizeof(TYPE)*(oldSize-index));\
 		}\
 		memcpy(arr->data+index, x, sizeof(TYPE)*x->size);\
-		arr->size += x->size;\
 \
 		return CUTILS_OK;\
 	}\
