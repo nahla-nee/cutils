@@ -30,7 +30,7 @@ typedef struct cutilsTcpServer{
 } cutilsTcpServer;
 
 int cutilsTcpServerInit(cutilsTcpServer *server, const char *service, int backlog);
-cutilsTcpServer* cutilsTcPServerNew(const char *service, int backlog);
+cutilsTcpServer* cutilsTcpServerNew(const char *service, int backlog);
 void cutilsTcpServerFree(cutilsTcpServer *server);
 
 int cutilsTcpServerAccept(cutilsTcpServer *server, size_t bufferSize);

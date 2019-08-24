@@ -48,7 +48,7 @@ int cutilsTcpServerInit(cutilsTcpServer *server, const char *service, int backlo
 	return CUTILS_OK;
 }
 
-cutilsTcpServer* cutilsTcPServerNew(const char *service, int backlog){
+cutilsTcpServer* cutilsTcpServerNew(const char *service, int backlog){
 	cutilsTcpServer *ret = malloc(sizeof(cutilsTcpServer));
 	if(ret == NULL){
 		return NULL;
