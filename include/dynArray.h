@@ -58,10 +58,10 @@
 \
 	int NAME##Copy(NAME *dst, NAME *src){\
 		/*allocate the memory first before we free, so that if we cant allocate old mem is not lost*/\
-		TYPE *tmp = malloc(sizeof(TYPE)*src->size);\
-		if(tmp == NULL){\
-			return CUTILS_NOMEM;\
-		}\
+		int err = NAME##Resize(dst, src->size);\
+		if(err != CUTILS_OK){
+			return err;\
+		}
 \
 		dst->data = tmp;\
 		dst->size = src->size;\
