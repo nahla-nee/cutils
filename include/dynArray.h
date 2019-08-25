@@ -26,6 +26,8 @@
 	int NAME##Resize(NAME *arr, size_t size);\
 	int NAME##Reserve(NAME *arr, size_t capacity);\
 	int NAME##PushBack(NAME *arr, TYPE x);\
+	int NAME##PushBackPtr(NAME *arr, TYPE *x, size_t len);\
+	int NAME##PushBackArr(NAME *arr, NAME *x);\
 	int NAME##Insert(NAME *arr, TYPE x, size_t index);\
 	int NAME##InsertPtr(NAME *arr, TYPE *x, size_t len, size_t index);\
 	int NAME##InsertArr(NAME *arr, NAME *x, size_t index);\
@@ -59,13 +61,10 @@
 	int NAME##Copy(NAME *dst, NAME *src){\
 		/*allocate the memory first before we free, so that if we cant allocate old mem is not lost*/\
 		int err = NAME##Resize(dst, src->size);\
-		if(err != CUTILS_OK){
+		if(err != CUTILS_OK){\
 			return err;\
-		}
+		}\
 \
-		dst->data = tmp;\
-		dst->size = src->size;\
-		dst->capacity = dst->size;\
 		memcpy(dst->data, src->data, sizeof(TYPE)*dst->size);\
 \
 		return CUTILS_OK;\
@@ -123,6 +122,30 @@
 		}\
 \
 		arr->data[arr->size-1] = x;\
+		return CUTILS_OK;\
+	}\
+\
+	int NAME##PushBackPtr(NAME *arr, TYPE *x, size_t len){\
+		size_t oldSize = arr->size;\
+		int err = NAME##Resize(arr, arr->size+len);\
+		if(err != CUTILS_OK){\
+			return err;\
+		}\
+\
+		memcpy(arr->data+oldSize, x, len);\
+\
+		return CUTILS_OK;\
+	}\
+\
+	int NAME##PushBackArr(NAME *arr, NAME *x){\
+		size_t oldSize = arr->size;\
+		int err = NAME##Resize(arr, arr->size+x->size);\
+		if(err != CUTILS_OK){\
+			return err;\
+		}\
+\
+		memcpy(arr->data+oldSize, x->data, x->size);\
+\
 		return CUTILS_OK;\
 	}\
 	int NAME##Insert(NAME *arr, TYPE x, size_t index){\
