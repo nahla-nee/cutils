@@ -86,11 +86,16 @@ void cutilsFileClose(cutilsFile *file){
 	cutilsStringSet(&file->mode, "");
 }
 
-void cutilsFileFree(cutilsFile *file){
+void cutilsFileDeinit(cutilsFile *file){
 	fclose(file->file);
 	file->file = NULL;
-	cutilsStringFree(&file->path);
-	cutilsStringFree(&file->mode);
+	cutilsStringDeinit(&file->path);
+	cutilsStringDeinit(&file->mode);
+}
+
+void cutilsFileFree(cutilsFile *file){
+	cutilsFileDeinit(file);
+	free(file);
 }
 
 int cutilsFileRead(cutilsFile *file, cutilsByteStream *stream){

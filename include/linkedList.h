@@ -23,6 +23,7 @@
 	int NAME##Copy(NAME *dst, NAME *src);\
 	void NAME##Move(NAME *dst, NAME *src);\
 	void NAME##Swap(NAME *a, NAME *b);\
+	void NAME##Deinit(NAME *list);\
 	void NAME##Free(NAME *list);\
 	int NAME##Resize(NAME *list, size_t count);\
 	void NAME##AllocNodes(size_t count, NAME *list, NAME##Node **head, NAME##Node **tail);\
@@ -81,7 +82,7 @@
 		memset(b, 0, sizeof(NAME));\
 	}\
 \
-	void NAME##Free(NAME *list){\
+	void NAME##Deinit(NAME *list){\
 		NAME##Node *current = list->head;\
 		NAME##Node *next;\
 		while(current != NULL){\
@@ -90,6 +91,11 @@
 			current = next;\
 		}\
 		memset(list, 0, sizeof(NAME));\
+	}\
+\
+	void NAME##Free(NAME *list){\
+		NAME##Deinit(list);\
+		free(list);\
 	}\
 \
 	int NAME##Resize(NAME *list, size_t count){\

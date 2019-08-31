@@ -32,6 +32,7 @@ typedef struct cutilsTcpServer{
 
 int cutilsTcpServerInit(cutilsTcpServer *server, const char *service, int backlog);
 cutilsTcpServer* cutilsTcpServerNew(const char *service, int backlog);
+void cutilsTcpServerDeinit(cutilsTcpServer *server);
 void cutilsTcpServerFree(cutilsTcpServer *server);
 
 int cutilsTcpServerAccept(cutilsTcpServer *server, size_t bufferSize);

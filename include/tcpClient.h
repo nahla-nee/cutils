@@ -20,6 +20,7 @@ typedef struct cutilsTcpClient{
 
 int cutilsTcpClientInit(cutilsTcpClient *client, size_t bufferSize);
 cutilsTcpClient* cutilsTcpClientNew(size_t bufferSize);
+void cutilsTcpClientDeinit(cutilsTcpClient *client);
 void cutilsTcpClientFree(cutilsTcpClient *client);
 
 int cutilsTcpClientConnect(cutilsTcpClient *client, const char *node, const char *service);

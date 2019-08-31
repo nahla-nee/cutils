@@ -64,7 +64,7 @@ cutilsTcpServer* cutilsTcpServerNew(const char *service, int backlog){
 	return ret;
 }
 
-void cutilsTcpServerFree(cutilsTcpServer *server){
+void cutilsTcpServerDeinit(cutilsTcpServer *server){
 	for(size_t i = 0; i < server->clients.size; i++){
 		close(server->clients.data[i].sockfd);
 		cutilsByteStreamFree(&server->clients.data[i].buffer);
@@ -73,6 +73,11 @@ void cutilsTcpServerFree(cutilsTcpServer *server){
 
 	close(server->sockfd);
 	server->sockfd = -1;
+}
+
+void cutilsTcpServerFree(cutilsTcpServer *server){
+	cutilsTcpServerDeinit(server);
+	free(server);
 }
 
 int cutilsTcpServerAccept(cutilsTcpServer *server, size_t bufferSize){

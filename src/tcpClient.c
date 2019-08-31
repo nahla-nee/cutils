@@ -27,10 +27,15 @@ cutilsTcpClient* cutilsTcpClientNew(size_t bufferSize){
 	return ret;
 }
 
-void cutilsTcpClientFree(cutilsTcpClient *client){
+void cutilsTcpClientDeinit(cutilsTcpClient *client){
 	cutilsTcpClientDisconnect(client);
 	cutilsStringFree(&client->server);
 	cutilsByteStreamFree(&client->buffer);
+}
+
+void cutilsTcpClientFree(cutilsTcpClient *client){
+	cutilsTcpClientDeinit(client);
+	free(client);
 }
 
 int cutilsTcpClientConnect(cutilsTcpClient *client, const char *node, const char *service){

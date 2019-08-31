@@ -22,6 +22,7 @@ typedef struct cutilsLogger{
 
 void cutilsLoggerInit(cutilsLogger *logger, cutilsLogLevel level);
 cutilsLogger* cutilsLoggerNew(cutilsLogLevel level);
+void cutilsLoggerDeinit(cutilsLogger *logger);
 void cutilsLoggerFree(cutilsLogger *logger);
 
 void cutilsLoggerLog(cutilsLogger *logger, const char *msg, cutilsLogLevel level);

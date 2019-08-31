@@ -28,16 +28,10 @@ cutilsString* cutilsStringNew(size_t capacity){
 }
 
 int cutilsStringCopy(cutilsString *dst, cutilsString *src){
-	char *tmp = malloc(src->len);
-	if(tmp == NULL){
-		return CUTILS_NOMEM;
+	int err = cutilsStringResize(dst, src->len);
+	if(err != CUTILS_OK){
+		return err;
 	}
-	if(dst->str != NULL){
-		cutilsStringFree(dst);
-	}
-	dst->str = tmp;
-	dst->len = src->len;
-	dst->capacity = src->capacity;
 	memcpy(dst->str, src->str, src->len);
 
 	return CUTILS_OK;
@@ -54,9 +48,14 @@ void cutilsStringSwap(cutilsString *a, cutilsString *b){
 	*b = tmp;
 }
 
-void cutilsStringFree(cutilsString *str){
+void cutilsStringDeinit(cutilsString *str){
 	free(str->str);
 	memset(str, 0, sizeof(cutilsString));
+}
+
+void cutilsStringFree(cutilsString *str){
+	cutilsStringDeinit(str);
+	free(str);
 }
 
 int cutilsStringResize(cutilsString *str, size_t len){

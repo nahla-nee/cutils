@@ -22,7 +22,8 @@
 	int NAME##Copy(NAME *dst, NAME *src);\
 	void NAME##Move(NAME *dst, NAME *src);\
 	void NAME##Swap(NAME *a, NAME *b);\
-	void NAME##Free(NAME *arr);\
+	void NAME##Deinit(NAME *arr);\
+	void NAME##Free(NAME *arr);;\
 	int NAME##Resize(NAME *arr, size_t size);\
 	int NAME##Reserve(NAME *arr, size_t capacity);\
 	int NAME##PushBack(NAME *arr, TYPE x);\
@@ -81,9 +82,14 @@
 		*b = tmp;\
 	}\
 \
-	void NAME##Free(NAME *arr){\
+	void NAME##Deinit(NAME *arr){\
 		free(arr->data);\
 		memset(arr, 0, sizeof(NAME));\
+	}\
+\
+	void NAME##Free(NAME *arr){\
+		NAME##Deinit(arr);\
+		free(arr);\
 	}\
 \
 	int NAME##Resize(NAME *arr, size_t size){\

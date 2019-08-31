@@ -17,7 +17,7 @@ cutilsLogger* cutilsLoggerNew(cutilsLogLevel level){
 	return ret;
 }
 
-void cutilsLoggerFree(cutilsLogger *logger){
+void cutilsLoggerDeinit(cutilsLogger *logger){
 	if(logger->info != stdout && logger->info != stderr){
 		fclose(logger->info);
 	}
@@ -31,6 +31,11 @@ void cutilsLoggerFree(cutilsLogger *logger){
 		fclose(logger->fatal);
 	}
 	memset(logger, 0, sizeof(cutilsLogger));
+}
+
+void cutilsLoggerFree(cutilsLogger *logger){
+	cutilsLoggerDeinit(logger);
+	free(logger);
 }
 
 void cutilsLoggerLog(cutilsLogger *logger, const char *msg, cutilsLogLevel level){

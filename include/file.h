@@ -32,6 +32,7 @@ int cutilsFileCopy(cutilsFile *dst, cutilsFile *src);
 void cutilsFileMove(cutilsFile *dst, cutilsFile *src);
 void cutilsFileSwap(cutilsFile *a, cutilsFile *b);
 void cutilsFileClose(cutilsFile *file);
+void cutilsFileDeinit(cutilsFile *file);
 void cutilsFileFree(cutilsFile *file);
 
 int cutilsFileRead(cutilsFile *file, cutilsByteStream *stream);
