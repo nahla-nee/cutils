@@ -1,7 +1,5 @@
 #include "str.h"
 
-CUTILS_DEF_DYNARRAY_C(cutilsString, cutilsStringArr);
-
 int cutilsStringInit(cutilsString *str, size_t capacity){
 	//allocate one more byte for null terminator
 	str->str = calloc(capacity+1, 1);
@@ -249,4 +247,12 @@ int cutilsStringDeleteRange(cutilsString *str, size_t start, size_t end){
 	cutilsStringResize(str, str->len-(end-start)-1);
 
 	return CUTILS_OK;
+}
+
+CUTILS_DEF_DYNARRAY_C(cutilsString, cutilsStringArr, cutilsStringArrDeinitCallback);
+
+void cutilsStringArrDeinitCallback(struct cutilsStringArr *arr, void *usrData){
+	for(size_t i = 0; i < arr->size; i++){
+		cutilsStringDeinit(&arr->data[i]);
+	}
 }

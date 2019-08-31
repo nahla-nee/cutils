@@ -8,20 +8,9 @@
 #include <unistd.h>
 #include <string.h>
 
-#include "str.h"
 #include "bytestream.h"
 #include "dynArray.h"
-
-
-typedef struct cutilsTcpServerClient{
-	int sockfd;
-
-	struct sockaddr_storage address;
-	socklen_t addressSize;
-	cutilsByteStream buffer;
-} cutilsTcpServerClient;
-
-CUTILS_DEF_DYNARRAY_H(cutilsTcpServerClient, cutilsTcpServerClientArr);
+#include "tcpServerClient.h"
 
 typedef struct cutilsTcpServer{
 	int sockfd;
@@ -34,7 +23,5 @@ int cutilsTcpServerInit(cutilsTcpServer *server, const char *service, int backlo
 cutilsTcpServer* cutilsTcpServerNew(const char *service, int backlog);
 void cutilsTcpServerDeinit(cutilsTcpServer *server);
 void cutilsTcpServerFree(cutilsTcpServer *server);
-
-int cutilsTcpServerAccept(cutilsTcpServer *server, size_t bufferSize);
 
 #endif

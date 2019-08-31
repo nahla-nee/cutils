@@ -11,10 +11,15 @@
 #include "errors.h"
 
 #define CUTILS_DEF_DYNARRAY_H(TYPE, NAME)\
+	struct NAME;\
+	typedef void(*NAME##DeinitFn)(struct NAME*, void*);\
+\
 	typedef struct NAME{\
 		TYPE *data;\
 		size_t size;\
 		size_t capacity;\
+		void *usrData;\
+		NAME##DeinitFn callback;\
 	} NAME;\
 \
 	int NAME##Init(NAME *arr, size_t size);\
@@ -23,7 +28,9 @@
 	void NAME##Move(NAME *dst, NAME *src);\
 	void NAME##Swap(NAME *a, NAME *b);\
 	void NAME##Deinit(NAME *arr);\
-	void NAME##Free(NAME *arr);;\
+	void NAME##Free(NAME *arr);\
+	void NAME##SetUserData(NAME *arr, void *data);\
+	void NAME##SetFreeCallback(NAME *arr, NAME##DeinitFn callback);\
 	int NAME##Resize(NAME *arr, size_t size);\
 	int NAME##Reserve(NAME *arr, size_t capacity);\
 	int NAME##PushBack(NAME *arr, TYPE x);\
@@ -35,7 +42,7 @@
 	int NAME##Delete(NAME *arr, size_t index);\
 	int NAME##DeleteRange(NAME *arr, size_t start, size_t end);
 
-#define CUTILS_DEF_DYNARRAY_C(TYPE, NAME)\
+#define CUTILS_DEF_DYNARRAY_C(TYPE, NAME, DEFAULT_CALLBACK)\
 	int NAME##Init(NAME *arr, size_t size){\
 		arr->data = malloc(sizeof(TYPE)*size);\
 		if(arr->data == NULL){\
@@ -43,6 +50,8 @@
 		}\
 		arr->capacity = size;\
 		arr->size = 0;\
+		arr->usrData = NULL;\
+		arr->callback = DEFAULT_CALLBACK;\
 \
 		return CUTILS_OK;\
 	}\
@@ -83,6 +92,9 @@
 	}\
 \
 	void NAME##Deinit(NAME *arr){\
+		if(arr->callback != NULL){\
+			arr->callback(arr, arr->usrData);\
+		}\
 		free(arr->data);\
 		memset(arr, 0, sizeof(NAME));\
 	}\
@@ -90,6 +102,14 @@
 	void NAME##Free(NAME *arr){\
 		NAME##Deinit(arr);\
 		free(arr);\
+	}\
+\
+	void NAME##SetUserData(NAME *arr, void *data){\
+		arr->usrData = data;\
+	}\
+\
+	void NAME##SetFreeCallback(NAME *arr, NAME##DeinitFn callback){\
+		arr->callback = callback;\
 	}\
 \
 	int NAME##Resize(NAME *arr, size_t size){\

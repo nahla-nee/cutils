@@ -1,7 +1,5 @@
 #include "tcpServer.h"
 
-CUTILS_DEF_DYNARRAY_C(cutilsTcpServerClient, cutilsTcpServerClientArr);
-
 int cutilsTcpServerInit(cutilsTcpServer *server, const char *service, int backlog){
 	server->backlog = backlog;
 	server->sockfd = -1;
@@ -65,10 +63,6 @@ cutilsTcpServer* cutilsTcpServerNew(const char *service, int backlog){
 }
 
 void cutilsTcpServerDeinit(cutilsTcpServer *server){
-	for(size_t i = 0; i < server->clients.size; i++){
-		close(server->clients.data[i].sockfd);
-		cutilsByteStreamFree(&server->clients.data[i].buffer);
-	}
 	cutilsTcpServerClientArrFree(&server->clients);
 
 	close(server->sockfd);
@@ -78,28 +72,4 @@ void cutilsTcpServerDeinit(cutilsTcpServer *server){
 void cutilsTcpServerFree(cutilsTcpServer *server){
 	cutilsTcpServerDeinit(server);
 	free(server);
-}
-
-int cutilsTcpServerAccept(cutilsTcpServer *server, size_t bufferSize){
-	cutilsTcpServerClient newClient;
-	newClient.addressSize = sizeof(struct sockaddr_storage);
-	newClient.sockfd = accept(server->sockfd, (struct sockaddr*)&newClient.address, &newClient.addressSize);
-	if(newClient.sockfd == -1){
-		return CUTILS_ACCEPT;
-	}
-
-	int err = cutilsByteStreamInit(&newClient.buffer, bufferSize);
-	if(err != CUTILS_OK){
-		close(newClient.sockfd);
-		return err;
-	}
-
-	err = cutilsTcpServerClientArrPushBack(&server->clients, newClient);
-	if(err != CUTILS_OK){
-		close(newClient.sockfd);
-		cutilsByteStreamFree(&newClient.buffer);
-		return err;
-	}
-
-	return CUTILS_OK;
 }

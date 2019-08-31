@@ -14,8 +14,6 @@ typedef struct cutilsString{
 	size_t capacity;
 } cutilsString;
 
-CUTILS_DEF_DYNARRAY_H(cutilsString, cutilsStringArr);
-
 /*
 preallocates memory for the string, if successful it will have len bytes to hold chars in
 if len is 0 then this function will just zero out the struct and return
@@ -79,5 +77,10 @@ int cutilsStringDeleteRange(cutilsString *str, size_t start, size_t end);
 		cutilsString *: cutilsStringSetString,\
 		const cutilsString *: cutilsStringSetString\
 	)(STR, X)
+
+struct cutilsStringArr;
+void cutilsStringArrDeinitCallback(struct cutilsStringArr *arr, void *usrData);
+
+CUTILS_DEF_DYNARRAY_H(cutilsString, cutilsStringArr);
 
 #endif

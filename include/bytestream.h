@@ -10,6 +10,9 @@
 
 CUTILS_DEF_DYNARRAY_H(unsigned char, cutilsByteStream);
 
+struct cutilsByteStreamArr;
+void cutilsByteStreamArrDeinitCallback(struct cutilsByteStreamArr *arr, void *usrData);
+
 CUTILS_DEF_DYNARRAY_H(cutilsByteStream, cutilsByteStreamArr);
 
 #endif
