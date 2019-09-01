@@ -9,7 +9,9 @@
 #define CUTILS_BAD_WRITE 5
 #define CUTILS_GETADDRINFO 6
 #define CUTILS_SOCKET 7
-#define CUTILS_LISTEN 8
-#define CUTILS_ACCEPT 9
+#define CUTILS_ACCEPT 8
+#ifndef CUTILS_NO_LIBEVENT
+#define CUTILS_CREATE_EVENT 9
+#endif
 
 #endif

@@ -9,8 +9,23 @@ int cutilsTcpClientInit(cutilsTcpClient *client, size_t bufferSize){
 
 	err = cutilsByteStreamInit(&client->buffer, bufferSize);
 	if(err != CUTILS_OK){
+		cutilsStringDeinit(&client->server);
 		return err;
 	}
+
+	#ifndef CUTILS_NO_LIBEVENT
+	client->eb = event_base_new();
+	if(client->eb == NULL){
+		cutilsStringDeinit(&client->server);
+		cutilsByteStreamDeinit(&client->buffer);
+		return CUTILS_NOMEM;
+	}
+
+	client->ev = NULL;
+	client->useTimeout = false;
+	#endif
+
+	client->connected = false;
 
 	return CUTILS_OK;
 }
@@ -31,6 +46,16 @@ void cutilsTcpClientDeinit(cutilsTcpClient *client){
 	cutilsTcpClientDisconnect(client);
 	cutilsStringFree(&client->server);
 	cutilsByteStreamFree(&client->buffer);
+	#ifndef CUTILS_NO_LIBEVENT
+	if(client->ev != NULL){
+		event_del(client->ev);
+		event_free(client->ev);
+	}
+	event_base_free(client->eb);
+	client->eb = NULL;
+	client->ev = NULL;
+	client->useTimeout = false;
+	#endif
 }
 
 void cutilsTcpClientFree(cutilsTcpClient *client){
@@ -38,8 +63,12 @@ void cutilsTcpClientFree(cutilsTcpClient *client){
 	free(client);
 }
 
+#ifndef CUTILS_NO_LIBEVENT
+int cutilsTcpClientConnect(cutilsTcpClient *client, const char *node, const char *service, event_callback_fn callback){
+#else
 int cutilsTcpClientConnect(cutilsTcpClient *client, const char *node, const char *service){
-	if(client->sockfd != -1){
+#endif
+	if(client->connected){
 		cutilsTcpClientDisconnect(client);
 	}
 
@@ -56,30 +85,79 @@ int cutilsTcpClientConnect(cutilsTcpClient *client, const char *node, const char
 
 	struct addrinfo *p = res;
 	while(p != NULL){
-		if((client->sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) != -1){
-			if(connect(client->sockfd, p->ai_addr, p->ai_addrlen) != -1){
-				break;
-			}
-			else{
+		int err = (client->sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol));
+		if(err == -1){
+			continue;
+		}
+		err = connect(client->sockfd, p->ai_addr, p->ai_addrlen);
+		if(err == -1){
+			close(client->sockfd);
+			client->sockfd = -1;
+			continue;
+		}
+
+		#ifndef CUTILS_NO_LIBEVENT
+		if(callback != NULL){
+			client->ev = event_new(client->eb, client->sockfd, EV_READ | EV_PERSIST, callback, client);
+			if(client->ev == NULL){
 				close(client->sockfd);
 				client->sockfd = -1;
+				freeaddrinfo(res);
+				client->connected = false;
+				return CUTILS_NOMEM;
+			}
+
+			struct timeval *timeout = client->useTimeout?&client->timeout:NULL;
+			if(event_add(client->ev, timeout) == -1){
+				event_free(client->ev);
+				close(client->sockfd);
+				client->sockfd = -1;
+				freeaddrinfo(res);
+				client->connected = false;
+				return CUTILS_CREATE_EVENT;
 			}
 		}
+		#endif
+
+		inet_ntop(p->ai_family, p->ai_addr, server, INET6_ADDRSTRLEN);
+		cutilsStringSet(&client->server, server);
+
+		client->connected = true;
+		break;
+
 		p = p->ai_next;
 	}
 
-	if(client->sockfd == -1){
+	freeaddrinfo(res);
+
+	if(!client->connected){
 		return CUTILS_SOCKET;
 	}
 
-	inet_ntop(p->ai_family, p->ai_addr, server, INET6_ADDRSTRLEN);
-	cutilsStringSet(&client->server, server);
-
-	freeaddrinfo(res);
 	return CUTILS_OK;
 }
 
 void cutilsTcpClientDisconnect(cutilsTcpClient *client){
 	close(client->sockfd);
 	client->sockfd = -1;
+	client->connected = false;
+	cutilsStringSet(&client->server, '\0');
 }
+
+#ifndef CUTILS_NO_LIBEVENT
+void cutilsTcpClientSetTimeout(cutilsTcpClient *client, time_t sec, suseconds_t usec){
+	client->timeout.tv_sec = sec;
+	client->timeout.tv_usec = usec;
+	if(client->connected){
+		event_add(client->ev, &client->timeout);
+	}
+	client->useTimeout = true;
+}
+
+void cutilsTcpClientClearTimeout(cutilsTcpClient *client){
+	if(client->connected){
+		event_add(client->ev, NULL);
+	}
+	client->useTimeout = false;
+}
+#endif

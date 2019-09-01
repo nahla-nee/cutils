@@ -6,18 +6,35 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
+#ifndef CUTILS_NO_LIBEVENT
+#include <event2/event.h>
+#endif
+
 #include "errors.h"
 #include "str.h"
 #include "bytestream.h"
 
+struct cutilsTcpServer;
+
 typedef struct cutilsTcpServerClient{
 	int sockfd;
 
+	#ifndef CUTILS_NO_LIBEVENT
+	struct event *ev;
+	#endif
+
+	struct cutilsTcpServer *server;
 	cutilsString address;
 	cutilsByteStream buffer;
 } cutilsTcpServerClient;
 
-int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, size_t bufferSize);
+#ifndef CUTILS_NO_LIBEVENT
+int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, size_t bufferSize,
+	struct cutilsTcpServer *server, event_callback_fn callback);
+#else
+int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, size_t bufferSize,
+	struct cutilsTcpServer *server);
+#endif
 void cutilsTcpServerClientDeinit(cutilsTcpServerClient *client);
 
 struct cutilsTcpServerClientArr;
