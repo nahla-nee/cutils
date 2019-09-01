@@ -197,6 +197,5 @@ int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd){
 }
 
 void cutilsTcpServerRemoveClient(cutilsTcpServer *server, size_t index){
-	cutilsTcpServerClientDeinit(server->clients.data+index);
 	cutilsTcpServerClientArrDelete(&server->clients, index);
 }
