@@ -251,8 +251,8 @@ int cutilsStringDeleteRange(cutilsString *str, size_t start, size_t end){
 
 CUTILS_DEF_DYNARRAY_C(cutilsString, cutilsStringArr, cutilsStringArrDeinitCallback);
 
-void cutilsStringArrDeinitCallback(struct cutilsStringArr *arr, void *usrData){
-	for(size_t i = 0; i < arr->size; i++){
-		cutilsStringDeinit(&arr->data[i]);
+void cutilsStringArrDeinitCallback(cutilsString *arr, size_t count, void *usrData){
+	for(size_t i = 0; i < count; i++){
+		cutilsStringDeinit(arr+i);
 	}
 }

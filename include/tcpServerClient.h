@@ -37,8 +37,7 @@ int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, size_t 
 #endif
 void cutilsTcpServerClientDeinit(cutilsTcpServerClient *client);
 
-struct cutilsTcpServerClientArr;
-void cutilsTcpServerClientArrDeinitCallback(struct cutilsTcpServerClientArr *arr, void *userData);
+void cutilsTcpServerClientArrDeinitCallback(cutilsTcpServerClient *arr, size_t count, void *userData);
 
 CUTILS_DEF_DYNARRAY_H(cutilsTcpServerClient, cutilsTcpServerClientArr);
 

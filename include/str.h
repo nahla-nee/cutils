@@ -78,8 +78,7 @@ int cutilsStringDeleteRange(cutilsString *str, size_t start, size_t end);
 		const cutilsString *: cutilsStringSetString\
 	)(STR, X)
 
-struct cutilsStringArr;
-void cutilsStringArrDeinitCallback(struct cutilsStringArr *arr, void *usrData);
+void cutilsStringArrDeinitCallback(cutilsString *arr, size_t count, void *usrData);
 
 CUTILS_DEF_DYNARRAY_H(cutilsString, cutilsStringArr);
 

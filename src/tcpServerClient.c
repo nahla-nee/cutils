@@ -72,8 +72,8 @@ void cutilsTcpServerClientDeinit(cutilsTcpServerClient *client){
 }
 
 CUTILS_DEF_DYNARRAY_C(cutilsTcpServerClient, cutilsTcpServerClientArr, cutilsTcpServerClientArrDeinitCallback);
-void cutilsTcpServerClientArrDeinitCallback(struct cutilsTcpServerClientArr *arr, void *userData){
-	for(size_t i = 0; i < arr->size; i++){
-		cutilsTcpServerClientDeinit(&arr->data[i]);
+void cutilsTcpServerClientArrDeinitCallback(cutilsTcpServerClient *arr, size_t count, void *userData){
+	for(size_t i = 0; i < count; i++){
+		cutilsTcpServerClientDeinit(arr+i);
 	}
 }

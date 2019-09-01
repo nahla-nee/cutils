@@ -4,8 +4,8 @@ CUTILS_DEF_DYNARRAY_C(unsigned char, cutilsByteStream, NULL);
 
 CUTILS_DEF_DYNARRAY_C(cutilsByteStream, cutilsByteStreamArr, cutilsByteStreamArrDeinitCallback);
 
-void cutilsByteStreamArrDeinitCallback(struct cutilsByteStreamArr *arr, void *usrData){
-	for(size_t i = 0; i < arr->size; i++){
-		cutilsByteStreamDeinit(&arr->data[i]);
+void cutilsByteStreamArrDeinitCallback(cutilsByteStream *arr, size_t count, void *usrData){
+	for(size_t i = 0; i < count; i++){
+		cutilsByteStreamDeinit(arr+i);
 	}
 }

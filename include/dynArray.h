@@ -12,14 +12,14 @@
 
 #define CUTILS_DEF_DYNARRAY_H(TYPE, NAME)\
 	struct NAME;\
-	typedef void(*NAME##DeinitFn)(struct NAME*, void*);\
+	typedef void(*NAME##RemoveFn)(TYPE*, size_t, void*);\
 \
 	typedef struct NAME{\
 		TYPE *data;\
 		size_t size;\
 		size_t capacity;\
 		void *usrData;\
-		NAME##DeinitFn callback;\
+		NAME##RemoveFn callback;\
 	} NAME;\
 \
 	int NAME##Init(NAME *arr, size_t size);\
@@ -30,7 +30,7 @@
 	void NAME##Deinit(NAME *arr);\
 	void NAME##Free(NAME *arr);\
 	void NAME##SetUserData(NAME *arr, void *data);\
-	void NAME##SetFreeCallback(NAME *arr, NAME##DeinitFn callback);\
+	void NAME##SetFreeCallback(NAME *arr, NAME##RemoveFn callback);\
 	int NAME##Resize(NAME *arr, size_t size);\
 	int NAME##Reserve(NAME *arr, size_t capacity);\
 	int NAME##PushBack(NAME *arr, TYPE x);\
@@ -93,7 +93,7 @@
 \
 	void NAME##Deinit(NAME *arr){\
 		if(arr->callback != NULL){\
-			arr->callback(arr, arr->usrData);\
+			arr->callback(arr->data, arr->size, arr->usrData);\
 		}\
 		free(arr->data);\
 		memset(arr, 0, sizeof(NAME));\
@@ -108,11 +108,14 @@
 		arr->usrData = data;\
 	}\
 \
-	void NAME##SetFreeCallback(NAME *arr, NAME##DeinitFn callback){\
+	void NAME##SetFreeCallback(NAME *arr, NAME##RemoveFn callback){\
 		arr->callback = callback;\
 	}\
 \
 	int NAME##Resize(NAME *arr, size_t size){\
+		if(size < arr->size){\
+			arr->callback(arr->data+size+1, arr->size-size, arr->usrData);\
+		}\
 		if(size <= arr->capacity){\
 			arr->size = size;\
 			return CUTILS_OK;\
@@ -233,6 +236,7 @@
 		if(index >= arr->size){\
 			return CUTILS_OUT_OF_BOUNDS;\
 		}\
+		arr->callback(arr->data+index, 1, arr->usrData);\
 \
 		memmove(arr->data+index, arr->data+index+1, sizeof(TYPE)*(arr->size-index-1));\
 		arr->size--;\
@@ -243,6 +247,7 @@
 		if(start >= arr->size || end >= arr->size){\
 			return CUTILS_OUT_OF_BOUNDS;\
 		}\
+		arr->callback(arr->data+start, end-start+1, arr->usrData);\
 \
 		if(start == 0 && end == arr->size){\
 			NAME##Resize(arr, 0);\
