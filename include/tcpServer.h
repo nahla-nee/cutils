@@ -7,10 +7,10 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdbool.h>
 
 #ifndef CUTILS_NO_LIBEVENT
 #include <event2/event.h>
-#include <stdbool.h>
 #endif
 
 #include "str.h"
@@ -54,6 +54,12 @@ void cutilsTcpServerClose(cutilsTcpServer *server);
 int cutilsTcpServerStartEventLoop(cutilsTcpServer *server);
 int cutilsTcpServerStopEventLoop(cutilsTcpServer *server);
 int cutilsTcpServerForceStopEventLoop(cutilsTcpServer *server);
+
+void cutilsTcpServerSetTimeout(cutilsTcpServer *server, time_t sec, suseconds_t usec);
+void cutilsTcpServerClearTimeout(cutilsTcpServer *server);
+
+void cutilsTcpServerSetClientTimeout(cutilsTcpServer *server, time_t sec, suseconds_t usec);
+void cutilsTcpServerClearClientTimeout(cutilsTcpServer *server);
 #endif
 
 #ifndef CUTILS_NO_LIBEVENT

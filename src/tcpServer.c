@@ -175,6 +175,42 @@ int cutilsTcpServerStopEventLoop(cutilsTcpServer *server){
 int cutilsTcpServerForceStopEventLoop(cutilsTcpServer *server){
 	return event_base_loopbreak(server->eb);
 }
+
+void cutilsTcpServerSetTimeout(cutilsTcpServer *server, time_t sec, suseconds_t usec){
+	server->timeout.tv_sec = sec;
+	server->timeout.tv_usec = usec;
+	if(server->started){
+		event_add(server->ev, &server->timeout);
+	}
+	server->useTimeout = true;
+}
+
+void cutilsTcpServerClearTimeout(cutilsTcpServer *server){
+	if(server->started){
+		event_add(server->ev, NULL);
+	}
+	server->useTimeout = false;
+}
+
+void cutilsTcpServerSetClientTimeout(cutilsTcpServer *server, time_t sec, suseconds_t usec){
+	server->timeoutClient.tv_sec = sec;
+	server->timeoutClient.tv_usec = usec;
+	if(server->started){
+		for(size_t i = 0; i < server->clients.size; i++){
+			event_add(server->clients.data[i].ev, &server->timeoutClient);
+		}
+	}
+	server->useTimeoutClient = true;
+}
+
+void cutilsTcpServerClearClientTimeout(cutilsTcpServer *server){
+	if(server->started){
+		for(size_t i = 0; i < server->clients.size; i++){
+			event_add(server->clients.data[i].ev, NULL);
+		}
+	}
+	server->useTimeoutClient = false;
+}
 #endif
 
 #ifndef CUTILS_NO_LIBEVENT
