@@ -163,16 +163,16 @@ void cutilsTcpServerClose(cutilsTcpServer *server){
 	server->started = false;
 }
 
-void cutilsTcpServerStartEventLoop(cutilsTcpServer *server){
-	event_base_loop(server->eb, EVLOOP_NO_EXIT_ON_EMPTY);
+int cutilsTcpServerStartEventLoop(cutilsTcpServer *server){
+	return event_base_loop(server->eb, EVLOOP_NO_EXIT_ON_EMPTY);
 }
 
-void cutilsTcpServerStopEventLoop(cutilsTcpServer *server){
-	event_base_loopexit(server->eb, NULL);
+int cutilsTcpServerStopEventLoop(cutilsTcpServer *server){
+	return event_base_loopexit(server->eb, NULL);
 }
 
-void cutilsTcpServerForceStopEventLoop(cutilsTcpServer *server){
-	event_base_loopbreak(server->eb);
+int cutilsTcpServerForceStopEventLoop(cutilsTcpServer *server){
+	return event_base_loopbreak(server->eb);
 }
 
 #ifndef CUTILS_NO_LIBEVENT

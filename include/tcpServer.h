@@ -51,9 +51,9 @@ int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog)
 void cutilsTcpServerClose(cutilsTcpServer *server);
 
 #ifndef CUTILS_NO_LIBEVENT
-void cutilsTcpServerStartEventLoop(cutilsTcpServer *server);
-void cutilsTcpServerStopEventLoop(cutilsTcpServer *server);
-void cutilsTcpServerForceStopEventLoop(cutilsTcpServer *server);
+int cutilsTcpServerStartEventLoop(cutilsTcpServer *server);
+int cutilsTcpServerStopEventLoop(cutilsTcpServer *server);
+int cutilsTcpServerForceStopEventLoop(cutilsTcpServer *server);
 #endif
 
 #ifndef CUTILS_NO_LIBEVENT
