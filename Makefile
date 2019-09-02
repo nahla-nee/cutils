@@ -1,5 +1,6 @@
 CC=clang
-SRCS=src/str.c src/bytestream.c src/file.c src/cliOptions.c src/tcpClient.c src/tcpServer.c src/logger.c
+SRCS=src/str.c src/bytestream.c src/file.c src/cliOptions.c src/tcpClient.c
+SRCS+=src/tcpServerClient.c src/tcpServer.c src/logger.c
 INCLUDE=-Iinclude/
 FLAGS=-O2 -fpic -c -D_FILE_OFFSET_BITS=64
 
