@@ -222,7 +222,7 @@ int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd,
 #endif
 	cutilsTcpServerClient client;
 	#ifndef CUTILS_NO_LIBEVENT
-	int err = cutilsTcpServerClientInit(&client, sockfd, server, addr, addrLen callback);
+	int err = cutilsTcpServerClientInit(&client, sockfd, server, addr, addrLen, callback);
 	#else
 	int err = cutilsTcpServerClientInit(&client, sockfd, server, addr, addrLen);
 	#endif
