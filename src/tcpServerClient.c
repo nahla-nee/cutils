@@ -1,11 +1,11 @@
 #include "tcpServerClient.h"
 
 #ifndef CUTILS_NO_LIBEVENT
-int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, size_t bufferSize,
-	struct cutilsTcpServer *server, event_callback_fn callback){
+int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, struct cutilsTcpServer *server,
+	struct sockaddr addr, socklen_t addrLen, event_callback_fn callback){
 #else
-int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, size_t bufferSize,
-	struct cutilsTcpServer *server){
+int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, struct cutilsTcpServer *server,
+	struct sockaddr addr, socklen_t addrLen){
 #endif
 	client->sockfd = sockfd;
 
@@ -14,20 +14,14 @@ int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, size_t 
 		return err;
 	}
 
-	err = cutilsByteStreamInit(&client->buffer, bufferSize);
+	err = cutilsByteStreamInit(&client->buffer, server->clientBufferSize);
 	if(err != CUTILS_OK){
 		cutilsStringDeinit(&client->address);
 		return err;
 	}
 
-	struct sockaddr sa;
-	socklen_t len;
-	getsockname(sockfd, &sa, &len);
-	int family = sa.sa_family;
-
 	char server[INET6_ADDRSTRLEN];
-	
-	inet_ntop(sa.sa_family, &client, server, INET6_ADDRSTRLEN);
+	inet_ntop(addr.sa_family, &client, server, INET6_ADDRSTRLEN);
 	cutilsStringSet(&client->address, server);
 	client->server = server;
 

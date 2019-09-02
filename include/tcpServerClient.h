@@ -29,11 +29,11 @@ typedef struct cutilsTcpServerClient{
 } cutilsTcpServerClient;
 
 #ifndef CUTILS_NO_LIBEVENT
-int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, size_t bufferSize,
-	struct cutilsTcpServer *server, event_callback_fn callback);
+int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, struct cutilsTcpServer *server,
+	struct sockaddr addr, socklen_t addrLen, event_callback_fn callback);
 #else
-int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, size_t bufferSize,
-	struct cutilsTcpServer *server);
+int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, struct cutilsTcpServer *server,
+	struct sockaddr addr, socklen_t addrLen);
 #endif
 void cutilsTcpServerClientDeinit(cutilsTcpServerClient *client);
 

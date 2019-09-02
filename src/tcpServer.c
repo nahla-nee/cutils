@@ -214,15 +214,17 @@ void cutilsTcpServerClearClientTimeout(cutilsTcpServer *server){
 #endif
 
 #ifndef CUTILS_NO_LIBEVENT
-int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd, event_callback_fn callback){
+int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd,
+	struct sockaddr addr, socklen_t addrLen, event_callback_fn callback){
 #else
-int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd){
+int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd,
+	struct sockaddr addr, socklen_t addrLen){
 #endif
 	cutilsTcpServerClient client;
 	#ifndef CUTILS_NO_LIBEVENT
-	int err = cutilsTcpServerClientInit(&client, sockfd, server->clientBufferSize, server, callback);
+	int err = cutilsTcpServerClientInit(&client, sockfd, server, addr, addrLen callback);
 	#else
-	int err = cutilsTcpServerClientInit(&client, sockfd, server->clientBufferSize, server);
+	int err = cutilsTcpServerClientInit(&client, sockfd, server, addr, addrLen);
 	#endif
 	if(err != CUTILS_OK){
 		return err;

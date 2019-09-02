@@ -63,9 +63,11 @@ void cutilsTcpServerClearClientTimeout(cutilsTcpServer *server);
 #endif
 
 #ifndef CUTILS_NO_LIBEVENT
-int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd, event_callback_fn callback);
+int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd,
+	struct sockaddr addr, socklen_t addrLen, event_callback_fn callback);
 #else
-int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd);
+int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd,
+	struct sockaddr addr, socklen_t addrLen);
 #endif
 void cutilsTcpServerRemoveClient(cutilsTcpServer *server, size_t index);
 
