@@ -44,6 +44,12 @@ int cutilsTcpClientConnect(cutilsTcpClient *client, const char *node, const char
 void cutilsTcpClientDisconnect(cutilsTcpClient *client);
 
 #ifndef CUTILS_NO_LIBEVENT
+int cutilsTcpClientStartEventLoop(cutilsTcpClient *client);
+int cutilsTcpClientStopEventLoop(cutilsTcpClient *client);
+int cutilsTcpClientForceStopEventLoop(cutilsTcpClient *client);
+#endif
+
+#ifndef CUTILS_NO_LIBEVENT
 void cutilsTcpClientSetTimeout(cutilsTcpClient *client, time_t sec, suseconds_t usec);
 void ctuilsTcpClientClearTimeout(cutilsTcpClient *client);
 #endif

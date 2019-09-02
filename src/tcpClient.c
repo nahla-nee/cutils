@@ -145,6 +145,18 @@ void cutilsTcpClientDisconnect(cutilsTcpClient *client){
 }
 
 #ifndef CUTILS_NO_LIBEVENT
+int cutilsTcpClientStartEventLoop(cutilsTcpClient *client){
+	return event_base_loop(client->eb, EVLOOP_NO_EXIT_ON_EMPTY);
+}
+
+int cutilsTcpClientStopEventLoop(cutilsTcpClient *client){
+	return event_base_loopexit(client->eb, NULL);
+}
+
+int cutilsTcpClientForceStopEventLoop(cutilsTcpClient *client){
+	return event_base_loopbreak(client->eb);
+}
+
 void cutilsTcpClientSetTimeout(cutilsTcpClient *client, time_t sec, suseconds_t usec){
 	client->timeout.tv_sec = sec;
 	client->timeout.tv_usec = usec;
