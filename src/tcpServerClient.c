@@ -1,10 +1,30 @@
 #include "tcpServerClient.h"
 
+typedef struct cutilsTcpServer{
+	int sockfd;
+	cutilsTcpServerClientArr clients;
+
+	#ifndef CUTILS_NO_LIBEVENT
+	struct event_base *eb;
+	struct event *ev;
+	struct timeval timeout;
+	bool useTimeout;
+
+	struct timeval timeoutClient;
+	bool useTimeoutClient;
+	#endif
+
+	size_t clientBufferSize;
+	cutilsString port;
+	int backlog;
+	bool started;
+} cutilsTcpServer;
+
 #ifndef CUTILS_NO_LIBEVENT
-int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, struct cutilsTcpServer *server,
+int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, cutilsTcpServer *server,
 	struct sockaddr addr, socklen_t addrLen, event_callback_fn callback){
 #else
-int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, struct cutilsTcpServer *server,
+int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, cutilsTcpServer *server,
 	struct sockaddr addr, socklen_t addrLen){
 #endif
 	client->sockfd = sockfd;
@@ -20,9 +40,9 @@ int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, struct 
 		return err;
 	}
 
-	char server[INET6_ADDRSTRLEN];
-	inet_ntop(addr.sa_family, &client, server, INET6_ADDRSTRLEN);
-	cutilsStringSet(&client->address, server);
+	char address[INET6_ADDRSTRLEN];
+	inet_ntop(addr.sa_family, &client, address, INET6_ADDRSTRLEN);
+	cutilsStringSet(&client->address, address);
 	client->server = server;
 
 	#ifndef CUTILS_NO_LIBEVENT
@@ -32,13 +52,13 @@ int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, struct 
 	}
 	client->ev = event_new(server->eb, client->sockfd, EV_READ | EV_PERSIST, callback, client);
 	if(client->ev == NULL){
-		cutilsStringDeinit(&client->server);
+		cutilsStringDeinit(&client->address);
 		cutilsByteStreamDeinit(&client->buffer);
 		client->server = NULL;
 		return CUTILS_CREATE_EVENT;
 	}
-	if(event_add(ev, &server->timeoutClient) == -1){
-		cutilsStringDeinit(&client->server);
+	if(event_add(client->ev, &server->timeoutClient) == -1){
+		cutilsStringDeinit(&client->address);
 		cutilsByteStreamDeinit(&client->buffer);
 		event_free(client->ev);
 		client->ev = NULL;

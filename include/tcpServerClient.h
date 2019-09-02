@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 
 #ifndef CUTILS_NO_LIBEVENT
 #include <event2/event.h>
@@ -14,7 +15,7 @@
 #include "str.h"
 #include "bytestream.h"
 
-struct cutilsTcpServer;
+typedef struct cutilsTcpServer cutilsTcpServer;
 
 typedef struct cutilsTcpServerClient{
 	int sockfd;
@@ -23,16 +24,16 @@ typedef struct cutilsTcpServerClient{
 	struct event *ev;
 	#endif
 
-	struct cutilsTcpServer *server;
+	cutilsTcpServer *server;
 	cutilsString address;
 	cutilsByteStream buffer;
 } cutilsTcpServerClient;
 
 #ifndef CUTILS_NO_LIBEVENT
-int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, struct cutilsTcpServer *server,
+int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, cutilsTcpServer *server,
 	struct sockaddr addr, socklen_t addrLen, event_callback_fn callback);
 #else
-int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, struct cutilsTcpServer *server,
+int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, cutilsTcpServer *server,
 	struct sockaddr addr, socklen_t addrLen);
 #endif
 void cutilsTcpServerClientDeinit(cutilsTcpServerClient *client);
