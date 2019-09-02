@@ -51,6 +51,12 @@ int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog)
 void cutilsTcpServerClose(cutilsTcpServer *server);
 
 #ifndef CUTILS_NO_LIBEVENT
+void cutilsTcpServerStartEventLoop(cutilsTcpServer *server);
+void cutilsTcpServerStopEventLoop(cutilsTcpServer *server);
+void cutilsTcpServerForceStopEventLoop(cutilsTcpServer *server);
+#endif
+
+#ifndef CUTILS_NO_LIBEVENT
 int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd, event_callback_fn callback);
 #else
 int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd);
