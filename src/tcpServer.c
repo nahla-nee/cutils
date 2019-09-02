@@ -17,14 +17,6 @@ int cutilsTcpServerInit(cutilsTcpServer *server, size_t clientBufferSize){
 		cutilsStringDeinit(&server->port);
 		return CUTILS_NOMEM;
 	}
-	server->ebClient = event_base_new();
-	if(server->ebClient == NULL){
-		cutilsTcpServerClientArrDeinit(&server->clients);
-		cutilsStringDeinit(&server->port);
-		event_base_free(server->eb);
-		server->eb = NULL;
-		return CUTILS_NOMEM;
-	}
 	server->useTimeout = server->useTimeoutClient = false;
 	#endif
 
@@ -52,8 +44,7 @@ void cutilsTcpServerDeinit(cutilsTcpServer *server){
 
 	#ifndef CUTILS_NO_LIBEVENT
 	event_base_free(server->eb);
-	event_base_free(server->ebClient);
-	server->eb = server->ebClient = NULL;
+	server->eb = NULL;
 	#endif
 }
 

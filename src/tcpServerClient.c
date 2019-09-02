@@ -36,7 +36,7 @@ int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, size_t 
 		client->ev = NULL;
 		return CUTILS_OK;
 	}
-	client->ev = event_new(server->ebClient, client->sockfd, EV_READ | EV_PERSIST, callback, client);
+	client->ev = event_new(server->eb, client->sockfd, EV_READ | EV_PERSIST, callback, client);
 	if(client->ev == NULL){
 		cutilsStringDeinit(&client->server);
 		cutilsByteStreamDeinit(&client->buffer);

@@ -28,7 +28,6 @@ typedef struct cutilsTcpServer{
 	struct timeval timeout;
 	bool useTimeout;
 
-	struct event_base *ebClient;
 	struct timeval timeoutClient;
 	bool useTimeoutClient;
 	#endif
