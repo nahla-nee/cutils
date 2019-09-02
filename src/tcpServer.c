@@ -163,6 +163,7 @@ void cutilsTcpServerClose(cutilsTcpServer *server){
 	server->started = false;
 }
 
+#ifndef CUTILS_NO_LIBEVENT
 int cutilsTcpServerStartEventLoop(cutilsTcpServer *server){
 	return event_base_loop(server->eb, EVLOOP_NO_EXIT_ON_EMPTY);
 }
@@ -174,6 +175,7 @@ int cutilsTcpServerStopEventLoop(cutilsTcpServer *server){
 int cutilsTcpServerForceStopEventLoop(cutilsTcpServer *server){
 	return event_base_loopbreak(server->eb);
 }
+#endif
 
 #ifndef CUTILS_NO_LIBEVENT
 int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd, event_callback_fn callback){
