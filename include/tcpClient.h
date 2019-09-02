@@ -37,9 +37,9 @@ void cutilsTcpClientDeinit(cutilsTcpClient *client);
 void cutilsTcpClientFree(cutilsTcpClient *client);
 
 #ifndef CUTILS_NO_LIBEVENT
-int cutilsTcpClientConnect(cutilsTcpClient *client, const char *node, const char *service, event_callback_fn callback);
+int cutilsTcpClientConnect(cutilsTcpClient *client, const char *address, const char *port, event_callback_fn callback);
 #else
-int cutilsTcpClientConnect(cutilsTcpClient *client, const char *node, const char *service);
+int cutilsTcpClientConnect(cutilsTcpClient *client, const char *address, const char *port);
 #endif
 void cutilsTcpClientDisconnect(cutilsTcpClient *client);
 

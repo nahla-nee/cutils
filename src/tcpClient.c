@@ -64,9 +64,9 @@ void cutilsTcpClientFree(cutilsTcpClient *client){
 }
 
 #ifndef CUTILS_NO_LIBEVENT
-int cutilsTcpClientConnect(cutilsTcpClient *client, const char *node, const char *service, event_callback_fn callback){
+int cutilsTcpClientConnect(cutilsTcpClient *client, const char *address, const char *port, event_callback_fn callback){
 #else
-int cutilsTcpClientConnect(cutilsTcpClient *client, const char *node, const char *service){
+int cutilsTcpClientConnect(cutilsTcpClient *client, const char *address, const char *port){
 #endif
 	if(client->connected){
 		cutilsTcpClientDisconnect(client);
@@ -79,7 +79,7 @@ int cutilsTcpClientConnect(cutilsTcpClient *client, const char *node, const char
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 
-	if(getaddrinfo(node, service, &hints, &res) != 0){
+	if(getaddrinfo(address, port, &hints, &res) != 0){
 		return CUTILS_GETADDRINFO;
 	}
 
