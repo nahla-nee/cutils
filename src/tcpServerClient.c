@@ -57,7 +57,8 @@ int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, cutilsT
 		client->server = NULL;
 		return CUTILS_CREATE_EVENT;
 	}
-	if(event_add(client->ev, &server->timeoutClient) == -1){
+	struct timeval *timeout = server->useTimeoutClient?&server->timeoutClient:NULL;
+	if(event_add(client->ev, timeout) == -1){
 		cutilsStringDeinit(&client->address);
 		cutilsByteStreamDeinit(&client->buffer);
 		event_free(client->ev);
