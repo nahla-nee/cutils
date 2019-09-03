@@ -28,19 +28,23 @@ void cutilsLoggerFree(cutilsLogger *logger){
 
 void cutilsLoggerLog(cutilsLogger *logger, const char *msg, cutilsLogLevel level){
 	if(level >= logger->logLevel){
-		fprintf(logger->info, "%s", msg);
-		fflush(logger->info);
-	}
-	if(level >= logger->logLevel){
-		fprintf(logger->warning, "%s", msg);
-		fflush(logger->warning);
-	}
-	if(level >= logger->logLevel){
-		fprintf(logger->error, "%s", msg);
-		fflush(logger->error);
-	}
-	if(level >= logger->logLevel){
-		fprintf(logger->fatal, "%s", msg);
-		fflush(logger->fatal);
+		switch(level){
+			case CUTILS_INFO:
+				fprintf(logger->info, "%s", msg);
+				fflush(logger->info);
+				break;
+			case CUTILS_WARNING:
+				fprintf(logger->warning, "%s", msg);
+				fflush(logger->warning);
+				break;
+			case CUTILS_ERROR:
+				fprintf(logger->error, "%s", msg);
+				fflush(logger->error);
+				break;
+			case CUTILS_FATAL:
+				fprintf(logger->fatal, "%s", msg);
+				fflush(logger->fatal);
+				break;
+		}
 	}
 }
