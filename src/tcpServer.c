@@ -48,6 +48,8 @@ void cutilsTcpServerDeinit(cutilsTcpServer *server){
 	event_base_free(server->eb);
 	server->eb = NULL;
 	#endif
+
+	cutilsStringDeinit(&server->port);
 }
 
 void cutilsTcpServerFree(cutilsTcpServer *server){
@@ -153,9 +155,11 @@ void cutilsTcpServerClose(cutilsTcpServer *server){
 	}
 
 	#ifndef CUTILS_NO_LIBEVENT
-	event_del(server->ev);
-	event_free(server->ev);
-	server->ev = NULL;
+	if(server->ev != NULL){
+		event_del(server->ev);
+		event_free(server->ev);
+		server->ev = NULL;
+	}
 	server->useTimeout = server->useTimeoutClient = false;
 	#endif
 

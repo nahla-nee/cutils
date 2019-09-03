@@ -72,7 +72,7 @@ int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, cutilsT
 }
 
 void cutilsTcpServerClientDeinit(cutilsTcpServerClient *client){
-	#ifdef CUTILS_NO_LIBEVENT
+	#ifndef CUTILS_NO_LIBEVENT
 	if(client->ev != NULL){
 		event_del(client->ev);
 		event_free(client->ev);
