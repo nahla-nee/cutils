@@ -1,6 +1,6 @@
 #include "bytestream.h"
 
-CUTILS_DEF_DYNARRAY_C(unsigned char, cutilsByteStream, NULL);
+CUTILS_DEF_DYNARRAY_C(char, cutilsByteStream, NULL);
 
 CUTILS_DEF_DYNARRAY_C(cutilsByteStream, cutilsByteStreamArr, cutilsByteStreamArrDeinitCallback);
 

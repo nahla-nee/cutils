@@ -8,7 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-CUTILS_DEF_DYNARRAY_H(unsigned char, cutilsByteStream);
+CUTILS_DEF_DYNARRAY_H(char, cutilsByteStream);
 
 void cutilsByteStreamArrDeinitCallback(cutilsByteStream *arr, size_t count, void *usrData);
 
