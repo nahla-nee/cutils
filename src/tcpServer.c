@@ -1,5 +1,7 @@
 #include "tcpServer.h"
 
+#include <stdio.h>
+
 int cutilsTcpServerInit(cutilsTcpServer *server, size_t clientBufferSize){
 	server->sockfd = -1;
 	server->clientBufferSize = clientBufferSize;
@@ -224,22 +226,23 @@ int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd,
 int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd,
 	struct sockaddr addr, socklen_t addrLen){
 #endif
-	cutilsTcpServerClient client;
+	cutilsTcpServerClientLLNode *newClient = malloc(sizeof(cutilsTcpServerClientLLNode));
+	if(newClient == NULL){
+		return CUTILS_NOMEM;
+	}
+
 	#ifndef CUTILS_NO_LIBEVENT
-	int err = cutilsTcpServerClientInit(&client, sockfd, server, addr, addrLen, callback);
+	int err = cutilsTcpServerClientInit(&newClient->data, sockfd, server, addr, addrLen, callback);
 	#else
-	int err = cutilsTcpServerClientInit(&client, sockfd, server, addr, addrLen);
+	int err = cutilsTcpServerClientInit(&newClient->data, sockfd, server, addr, addrLen);
 	#endif
 	if(err != CUTILS_OK){
+		free(newClient);
 		return err;
 	}
 
-	err = cutilsTcpServerClientLLPushBack(&server->clients, client);
-	if(err != CUTILS_OK){
-		cutilsTcpServerClientDeinit(&client);
-		return err;
-	}
-	server->clients.tail->data.node = server->clients.tail;
+	newClient->data.node = newClient;
+	cutilsTcpServerClientLLConnectNodeEnd(&server->clients, newClient);
 
 	return CUTILS_OK;
 }

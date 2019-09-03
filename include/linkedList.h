@@ -40,6 +40,9 @@
 	void NAME##ConnectNode(NAME##Node *node, NAME##Node *x);\
 	void NAME##ConnectNodes(NAME##Node *node, NAME##Node *x);\
 	void NAME##ConnectList(NAME##Node *node, NAME *x);\
+	void NAME##ConnectNodeEnd(NAME *list, NAME##Node *x);\
+	void NAME##ConnectNodesEnd(NAME *list, NAME##Node *x);\
+	void NAME##ConnectListEnd(NAME *list, NAME *x);\
 	void NAME##RemoveNode(NAME##Node *node);\
 	void NAME##RemoveNodes(NAME##Node *start, NAME##Node *end);\
 	int NAME##Insert(NAME##Node *node, TYPE x);\
@@ -312,6 +315,66 @@
 \
 		list->nodeCount += x->nodeCount;\
 		memset(x, 0, sizeof(NAME));\
+	}\
+\
+	void NAME##ConnectNodeEnd(NAME *list, NAME##Node *x){\
+		x->list = list;\
+		if(list->nodeCount == 0){\
+			list->head = list->tail = x;\
+			x->prev = x->next = NULL;\
+			list->nodeCount = 1;\
+			return;\
+		}\
+\
+		list->tail->next = x;\
+		x->prev = list->tail;\
+		x->next = NULL;\
+		list->tail = x;\
+		list->nodeCount++;\
+	}\
+\
+	void NAME##ConnectNodesEnd(NAME *list, NAME##Node *x){\
+		NAME##Node *head = x;\
+		NAME##Node *tail = x;\
+		NAME##Node *tmp = tail->next;\
+		size_t nodeCount = 0;\
+		while(tmp != NULL){\
+			tmp->list = list;\
+			tail = tmp;\
+			tmp = tmp->next;\
+			nodeCount++;\
+		}\
+\
+		if(list->nodeCount == 0){\
+			list->head = head;\
+			list->tail = tail;\
+			list->nodeCount = nodeCount;\
+			return;\
+		}\
+\
+		list->tail->next = head;\
+		head->prev = list->tail;\
+		list->tail = tail;\
+		list->nodeCount += nodeCount;\
+	}\
+\
+	void NAME##ConnectListEnd(NAME *list, NAME *x){\
+		NAME##Node *current = x->head;\
+		while(current != NULL){\
+			current->list = list;\
+			current = current->next;\
+		}\
+		if(list->nodeCount == 0){\
+			list->head = x->head;\
+			list->tail = x->tail;\
+			list->nodeCount = x->nodeCount;\
+			return;\
+		}\
+\
+		list->tail->next = x->head;\
+		x->head->prev = list->tail;\
+		list->tail = x->tail;\
+		list->nodeCount += x->nodeCount;\
 	}\
 \
 	void NAME##RemoveNode(NAME##Node *node){\
