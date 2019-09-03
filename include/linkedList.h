@@ -33,7 +33,7 @@
 	void NAME##SetUserData(NAME *list, void *data);\
 	void NAME##SetFreeCallback(NAME *list, NAME##RemoveFn callback);\
 	int NAME##Resize(NAME *list, size_t count);\
-	void NAME##AllocNodes(size_t count, NAME *list, NAME##Node **head, NAME##Node **tail);\
+	int NAME##AllocNodes(size_t count, NAME *list, NAME##Node **head, NAME##Node **tail);\
 	int NAME##PushBack(NAME *list, TYPE x);\
 	int NAME##PushBackNode(NAME *list, NAME##Node *x);\
 	int NAME##PushBackList(NAME *list, NAME *x);\
@@ -58,9 +58,9 @@
 			list->nodeCount = 0;\
 		}\
 		else{\
-			NAME##AllocNodes(initialNodes, list, &list->head, &list->tail);\
-			if(list->head == NULL){\
-				return CUTILS_NOMEM;\
+			int err = NAME##AllocNodes(initialNodes, list, &list->head, &list->tail);\
+			if(err != CUTILS_OK){\
+				return err;\
 			}\
 		}\
 \
@@ -148,9 +148,9 @@
 		else if(list->nodeCount < count){\
 			size_t diff = count-list->nodeCount;\
 			NAME##Node *head, *tail;\
-			NAME##AllocNodes(diff, list, &head, &tail);\
-			if(head == NULL){\
-				return CUTILS_NOMEM;\
+			int err = NAME##AllocNodes(diff, list, &head, &tail);\
+			if(err != CUTILS_OK){\
+				return err;\
 			}\
 \
 			if(list->nodeCount == 0){\
@@ -169,16 +169,16 @@
 		return CUTILS_OK;\
 	}\
 \
-	void NAME##AllocNodes(size_t count, NAME *list, NAME##Node **head, NAME##Node **tail){\
+	int NAME##AllocNodes(size_t count, NAME *list, NAME##Node **head, NAME##Node **tail){\
 		*head = *tail = NULL;\
 \
 		if(count == 0){\
-			return;\
+			return CUTILS_OK;\
 		}\
 \
 		*head = malloc(sizeof(NAME##Node));\
 		if(*head == NULL){\
-			return;\
+			return CUTILS_NOMEM;\
 		}\
 		(*head)->prev = (*head)->next = NULL;\
 		(*head)->list = list;\
@@ -198,7 +198,7 @@
 \
 				*head = NULL;\
 				*tail = NULL;\
-				return;\
+				return CUTILS_NOMEM;\
 			}\
 \
 			tmp->prev = *tail;\
@@ -207,6 +207,7 @@
 			*tail = tmp;\
 		}\
 		(*tail)->next = NULL;\
+		return CUTILS_OK;\
 	}\
 \
 	int NAME##PushBack(NAME *list, TYPE x){\
@@ -499,9 +500,9 @@
 		}\
 \
 		NAME##Node *head, *tail;\
-		NAME##AllocNodes(nodeCount, list, &head, &tail);\
-		if(head == NULL){\
-			return CUTILS_NOMEM;\
+		int err = NAME##AllocNodes(nodeCount, list, &head, &tail);\
+		if(err != CUTILS_OK){\
+			return err;\
 		}\
 \
 		NAME##Node *currentAlloc = head;\
@@ -529,8 +530,8 @@
 		NAME *list = node->list;\
 \
 		NAME##Node *head, *tail;\
-		NAME##AllocNodes(x->nodeCount, list, &head, &tail);\
-		if(head == NULL){\
+		int err = NAME##AllocNodes(x->nodeCount, list, &head, &tail);\
+		if(err != CUTILS_OK){\
 			return CUTILS_NOMEM;\
 		}\
 \
