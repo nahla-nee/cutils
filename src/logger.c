@@ -18,18 +18,6 @@ cutilsLogger* cutilsLoggerNew(cutilsLogLevel level){
 }
 
 void cutilsLoggerDeinit(cutilsLogger *logger){
-	if(logger->info != stdout && logger->info != stderr){
-		fclose(logger->info);
-	}
-	if(logger->warning != stdout && logger->warning != stderr){
-		fclose(logger->warning);
-	}
-	if(logger->error != stdout && logger->error != stderr){
-		fclose(logger->error);
-	}
-	if(logger->fatal != stdout && logger->error != stderr){
-		fclose(logger->fatal);
-	}
 	memset(logger, 0, sizeof(cutilsLogger));
 }
 
