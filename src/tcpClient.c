@@ -44,16 +44,11 @@ cutilsTcpClient* cutilsTcpClientNew(size_t bufferSize){
 
 void cutilsTcpClientDeinit(cutilsTcpClient *client){
 	cutilsTcpClientDisconnect(client);
-	cutilsStringFree(&client->server);
-	cutilsByteStreamFree(&client->buffer);
+	cutilsStringDeinit(&client->server);
+	cutilsByteStreamDeinit(&client->buffer);
 	#ifndef CUTILS_NO_LIBEVENT
-	if(client->ev != NULL){
-		event_del(client->ev);
-		event_free(client->ev);
-	}
 	event_base_free(client->eb);
 	client->eb = NULL;
-	client->ev = NULL;
 	client->useTimeout = false;
 	#endif
 }
@@ -138,9 +133,22 @@ int cutilsTcpClientConnect(cutilsTcpClient *client, const char *address, const c
 }
 
 void cutilsTcpClientDisconnect(cutilsTcpClient *client){
+	if(!client->connected){
+		return;
+	}
+
 	close(client->sockfd);
 	client->sockfd = -1;
 	client->connected = false;
+
+	#ifndef CUTILS_NO_LIBEVENT
+	if(client->ev != NULL){
+		event_del(client->ev);
+		event_free(client->ev);
+		client->ev = NULL;
+	}
+	#endif
+
 	cutilsStringSet(&client->server, '\0');
 }
 
