@@ -29,7 +29,7 @@
 	void NAME##Swap(NAME *a, NAME *b);\
 	void NAME##Deinit(NAME *arr);\
 	void NAME##Free(NAME *arr);\
-	void NAME##SetUserData(NAME *arr, void *data);\
+	void NAME##SetUsrptr(NAME *arr, void *data);\
 	void NAME##SetFreeCallback(NAME *arr, NAME##RemoveFn callback);\
 	int NAME##Resize(NAME *arr, size_t size);\
 	int NAME##Reserve(NAME *arr, size_t capacity);\
@@ -104,7 +104,7 @@
 		free(arr);\
 	}\
 \
-	void NAME##SetUserData(NAME *arr, void *data){\
+	void NAME##SetUsrptr(NAME *arr, void *data){\
 		arr->usrptr = data;\
 	}\
 \
