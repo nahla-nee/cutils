@@ -16,9 +16,9 @@ typedef struct cutilsCliOption{
 	int index;
 } cutilsCliOption;
 
+void cutilsCliOptionFindArr(cutilsCliOption *option, size_t size, int argc, char **argv);
 bool cutilsCliOptionFind(cutilsCliOption *option, int argc, char **argv);
-void cutilsCliOptionFindArr(cutilsCliOption *option, size_t size, argc char **argv);
 int cutilsCliOptionFindFlag(char *flag, int argc, char **argv);
-int cutilsCliOptionFindFlags(char *short, char *long, int argc, char **argv);
+int cutilsCliOptionFindFlags(char *shortFlag, char *longFlag, int argc, char **argv);
 
 #endif
