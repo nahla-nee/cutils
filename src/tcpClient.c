@@ -104,7 +104,7 @@ int cutilsTcpClientConnect(cutilsTcpClient *client, const char *address, const c
 				client->sockfd = -1;
 				freeaddrinfo(res);
 				client->connected = false;
-				return CUTILS_NOMEM;
+				return CUTILS_CREATE_EVENT;
 			}
 
 			struct timeval *timeout = client->useTimeout?&client->timeout:NULL;

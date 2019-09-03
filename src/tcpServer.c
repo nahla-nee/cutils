@@ -119,7 +119,7 @@ int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog)
 				server->sockfd = -1;
 				freeaddrinfo(res);
 				server->started = false;
-				return CUTILS_NOMEM;
+				return CUTILS_CREATE_EVENT;
 			}
 
 			struct timeval *timeout = server->useTimeout?&server->timeout:NULL;
