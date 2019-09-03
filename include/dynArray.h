@@ -18,7 +18,7 @@
 		TYPE *data;\
 		size_t size;\
 		size_t capacity;\
-		void *usrData;\
+		void *usrptr;\
 		NAME##RemoveFn callback;\
 	} NAME;\
 \
@@ -50,7 +50,7 @@
 		}\
 		arr->capacity = size;\
 		arr->size = 0;\
-		arr->usrData = NULL;\
+		arr->usrptr = NULL;\
 		arr->callback = DEFAULT_CALLBACK;\
 \
 		return CUTILS_OK;\
@@ -93,7 +93,7 @@
 \
 	void NAME##Deinit(NAME *arr){\
 		if(arr->callback != NULL){\
-			arr->callback(arr->data, arr->size, arr->usrData);\
+			arr->callback(arr->data, arr->size, arr->usrptr);\
 		}\
 		free(arr->data);\
 		memset(arr, 0, sizeof(NAME));\
@@ -105,7 +105,7 @@
 	}\
 \
 	void NAME##SetUserData(NAME *arr, void *data){\
-		arr->usrData = data;\
+		arr->usrptr = data;\
 	}\
 \
 	void NAME##SetFreeCallback(NAME *arr, NAME##RemoveFn callback){\
@@ -114,7 +114,7 @@
 \
 	int NAME##Resize(NAME *arr, size_t size){\
 		if(size < arr->size && arr->callback != NULL){\
-			arr->callback(arr->data+size+1, arr->size-size, arr->usrData);\
+			arr->callback(arr->data+size+1, arr->size-size, arr->usrptr);\
 		}\
 		if(size <= arr->capacity){\
 			arr->size = size;\
@@ -237,7 +237,7 @@
 			return CUTILS_OUT_OF_BOUNDS;\
 		}\
 		if(arr->callback != NULL){\
-			arr->callback(arr->data+index, 1, arr->usrData);\
+			arr->callback(arr->data+index, 1, arr->usrptr);\
 		}\
 \
 		memmove(arr->data+index, arr->data+index+1, sizeof(TYPE)*(arr->size-index-1));\
@@ -250,7 +250,7 @@
 			return CUTILS_OUT_OF_BOUNDS;\
 		}\
 		if(arr->callback != NULL){\
-			arr->callback(arr->data+start, end-start+1, arr->usrData);\
+			arr->callback(arr->data+start, end-start+1, arr->usrptr);\
 		}\
 \
 		if(start == 0 && end == arr->size){\
