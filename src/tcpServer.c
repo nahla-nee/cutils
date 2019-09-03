@@ -60,6 +60,10 @@ int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog,
 #else
 int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog){
 #endif
+	if(server->started){
+		cutilsTcpServerClose(server);
+	}
+
 	int err = cutilsTcpServerClientLLInit(&server->clients, 0);
 	if(err != CUTILS_OK){
 		return err;
