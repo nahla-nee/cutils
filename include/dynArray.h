@@ -113,7 +113,7 @@
 	}\
 \
 	int NAME##Resize(NAME *arr, size_t size){\
-		if(size < arr->size){\
+		if(size < arr->size && arr->callback != NULL){\
 			arr->callback(arr->data+size+1, arr->size-size, arr->usrData);\
 		}\
 		if(size <= arr->capacity){\
@@ -236,7 +236,9 @@
 		if(index >= arr->size){\
 			return CUTILS_OUT_OF_BOUNDS;\
 		}\
-		arr->callback(arr->data+index, 1, arr->usrData);\
+		if(arr->callback != NULL){\
+			arr->callback(arr->data+index, 1, arr->usrData);\
+		}\
 \
 		memmove(arr->data+index, arr->data+index+1, sizeof(TYPE)*(arr->size-index-1));\
 		arr->size--;\
@@ -247,7 +249,9 @@
 		if(start >= arr->size || end >= arr->size){\
 			return CUTILS_OUT_OF_BOUNDS;\
 		}\
-		arr->callback(arr->data+start, end-start+1, arr->usrData);\
+		if(arr->callback != NULL){\
+			arr->callback(arr->data+start, end-start+1, arr->usrData);\
+		}\
 \
 		if(start == 0 && end == arr->size){\
 			NAME##Resize(arr, 0);\

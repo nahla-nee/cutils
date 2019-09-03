@@ -13,7 +13,7 @@ int cutilsTcpServerInit(cutilsTcpServer *server, size_t clientBufferSize){
 	server->ev = NULL;
 	server->eb = event_base_new();
 	if(server->eb == NULL){
-		cutilsTcpServerClientArrDeinit(&server->clients);
+		cutilsTcpServerClientLLDeinit(&server->clients);
 		cutilsStringDeinit(&server->port);
 		return CUTILS_NOMEM;
 	}
@@ -58,7 +58,7 @@ int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog,
 #else
 int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog){
 #endif
-	int err = cutilsTcpServerClientArrInit(&server->clients, 0);
+	int err = cutilsTcpServerClientLLInit(&server->clients, 0);
 	if(err != CUTILS_OK){
 		return err;
 	}
@@ -153,7 +153,7 @@ void cutilsTcpServerClose(cutilsTcpServer *server){
 	server->useTimeout = server->useTimeoutClient = false;
 	#endif
 
-	cutilsTcpServerClientArrDeinit(&server->clients);
+	cutilsTcpServerClientLLDeinit(&server->clients);
 
 	close(server->sockfd);
 	server->sockfd = -1;
@@ -196,8 +196,10 @@ void cutilsTcpServerSetClientTimeout(cutilsTcpServer *server, time_t sec, suseco
 	server->timeoutClient.tv_sec = sec;
 	server->timeoutClient.tv_usec = usec;
 	if(server->started){
-		for(size_t i = 0; i < server->clients.size; i++){
-			event_add(server->clients.data[i].ev, &server->timeoutClient);
+		cutilsTcpServerClientLLNode *client = server->clients.head;
+		while(client != NULL){
+			event_add(client->data.ev, &server->timeoutClient);
+			client = client->next;\
 		}
 	}
 	server->useTimeoutClient = true;
@@ -205,8 +207,10 @@ void cutilsTcpServerSetClientTimeout(cutilsTcpServer *server, time_t sec, suseco
 
 void cutilsTcpServerClearClientTimeout(cutilsTcpServer *server){
 	if(server->started){
-		for(size_t i = 0; i < server->clients.size; i++){
-			event_add(server->clients.data[i].ev, NULL);
+		cutilsTcpServerClientLLNode *client = server->clients.head;
+		while(client != NULL){
+			event_add(client->data.ev, NULL);
+			client = client->next;\
 		}
 	}
 	server->useTimeoutClient = false;
@@ -230,15 +234,16 @@ int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd,
 		return err;
 	}
 
-	err = cutilsTcpServerClientArrPushBack(&server->clients, client);
+	err = cutilsTcpServerClientLLPushBack(&server->clients, client);
 	if(err != CUTILS_OK){
 		cutilsTcpServerClientDeinit(&client);
 		return err;
 	}
+	server->clients.tail->data.node = server->clients.tail;
 
 	return CUTILS_OK;
 }
 
-void cutilsTcpServerRemoveClient(cutilsTcpServer *server, size_t index){
-	cutilsTcpServerClientArrDelete(&server->clients, index);
+void cutilsTcpServerRemoveClient(cutilsTcpServer *server, cutilsTcpServerClient *client){
+	cutilsTcpServerClientLLRemoveNode(client->node);
 }

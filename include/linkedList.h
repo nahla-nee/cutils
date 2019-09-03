@@ -6,10 +6,15 @@
 #define CUTILS_DEF_LINKED_LIST_H(TYPE, NAME)\
 	struct NAME;\
 	struct NAME##Node;\
+	typedef void(*NAME##RemoveFn)(NAME##Node*, size_t, void*);\
+\
 	typedef struct NAME{\
 		struct NAME##Node *head;\
 		struct NAME##Node *tail;\
 		size_t nodeCount;\
+\
+		NAME##RemoveFn callback;\
+		void *usrptr;\
 	} NAME;\
 	typedef struct NAME##Node{\
 		TYPE data;\
@@ -18,16 +23,17 @@
 		struct NAME *list;\
 	} NAME##Node;\
 \
-	void NAME##Init(NAME *list, size_t initialNodes);\
+	int NAME##Init(NAME *list, size_t initialNodes);\
 	NAME* NAME##New(size_t initialNodes);\
 	int NAME##Copy(NAME *dst, NAME *src);\
 	void NAME##Move(NAME *dst, NAME *src);\
 	void NAME##Swap(NAME *a, NAME *b);\
 	void NAME##Deinit(NAME *list);\
 	void NAME##Free(NAME *list);\
+	void NAME##SetUserData(NAME *list, void *data);\
+	void NAME##SetFreeCallback(NAME *list, NAME##RemoveFn callback);\
 	int NAME##Resize(NAME *list, size_t count);\
 	void NAME##AllocNodes(size_t count, NAME *list, NAME##Node **head, NAME##Node **tail);\
-	size_t NAME##FreeNodes(NAME##Node *nodes);\
 	int NAME##PushBack(NAME *list, TYPE x);\
 	int NAME##PushBackNode(NAME *list, NAME##Node *x);\
 	int NAME##PushBackList(NAME *list, NAME *x);\
@@ -41,13 +47,24 @@
 	int NAME##InsertNodes(NAME##Node *node, NAME##Node *x);\
 	int NAME##InsertList(NAME##Node *node, NAME *x);\
 
-#define CUTILS_DEF_LINKED_LIST_C(TYPE, NAME)\
-	void NAME##Init(NAME *list, size_t initialNodes){\
+#define CUTILS_DEF_LINKED_LIST_C(TYPE, NAME, DEFAULT_CALLBACK)\
+	int NAME##Init(NAME *list, size_t initialNodes){\
 		if(initialNodes == 0){\
 			list->head = NULL;\
 			list->tail = NULL;\
 			list->nodeCount = 0;\
 		}\
+		else{\
+			NAME##AllocNodes(initialNodes, list, &list->head, &list->tail);\
+			if(list->head == NULL){\
+				return CUTILS_NOMEM;\
+			}\
+		}\
+\
+		list->callback = DEFAULT_CALLBACK;\
+		list->usrptr = NULL;\
+\
+		return CUTILS_OK;\
 	}\
 \
 	NAME* NAME##New(size_t initialNodes){\
@@ -83,6 +100,9 @@
 	}\
 \
 	void NAME##Deinit(NAME *list){\
+		if(list->callback != NULL){\
+			list->callback(list->head, list->nodeCount, list->usrptr);\
+		}\
 		NAME##Node *current = list->head;\
 		NAME##Node *next;\
 		while(current != NULL){\
@@ -98,10 +118,20 @@
 		free(list);\
 	}\
 \
+	void NAME##SetUserData(NAME *list, void *data){\
+		list->usrptr = data;\
+	}\
+	void NAME##SetFreeCallback(NAME *list, NAME##RemoveFn callback){\
+		list->callback = callback;\
+	}\
+\
 	int NAME##Resize(NAME *list, size_t count){\
 		if(list->nodeCount > count){\
 			/*doesn't make sense to use NAME##FreeNodes here we would have to traverse*/\
 			/*the list in reverse only for NAME##FreeNodes to traverse it forward again*/\
+			if(list->callback != NULL){\
+				list->callback(list->tail, list->nodeCount-count, list->usrptr);\
+			}\
 			NAME##Node *current = list->tail;\
 			NAME##Node *prev = current->prev;\
 			while(list->nodeCount > count){\
@@ -155,7 +185,14 @@
 		for(size_t i = 0; i < count-1; i++){\
 			NAME##Node *tmp = malloc(sizeof(NAME##Node));\
 			if(tmp == NULL){\
-				NAME##FreeNodes(*head);\
+				NAME##Node *current = *head;\
+				NAME##Node *next;\
+				while(current != NULL){\
+					next = current->next;\
+					free(current);\
+					current = next;\
+				}\
+\
 				*head = NULL;\
 				*tail = NULL;\
 				return;\
@@ -167,20 +204,6 @@
 			*tail = tmp;\
 		}\
 		(*tail)->next = NULL;\
-	}\
-\
-	size_t NAME##FreeNodes(NAME##Node *nodes){\
-		NAME##Node *current = nodes;\
-		NAME##Node *next;\
-		size_t nodesDeleted = 0;\
-		while(current != NULL){\
-			/*dont put this at the bottom because then we derefrence a null pointer*/\
-			next = current->next;\
-			free(current);\
-			current = next;\
-			nodesDeleted++;\
-		}\
-		return nodesDeleted;\
 	}\
 \
 	int NAME##PushBack(NAME *list, TYPE x){\
@@ -292,6 +315,9 @@
 	}\
 \
 	void NAME##RemoveNode(NAME##Node *node){\
+		if(node->list->callback != NULL){\
+			node->list->callback(node, 1, node->list->usrptr);\
+		}\
 		/*if node is head and tail i.e. 1 length list*/\
 		if(node->prev == NULL && node->next == NULL){\
 			node->list->head = NULL;\
@@ -325,6 +351,19 @@
 		NAME##Node *current = start;\
 		NAME##Node *next;\
 		size_t counter = 0;\
+		/*its super expensive to call the callback here because we have to traverse*/\
+		/*the list to count how many nodes are being removed and then again to actually free them*/\
+		/*so we only do this if we absolutely have to*/\
+		if(list->callback != NULL){\
+			while(current != end->next){\
+				next = current->next;\
+				current = next;\
+				counter++;\
+			}\
+			list->callback(start, counter, list->usrptr);\
+			counter = 0;\
+			current = start;\
+		}\
 		while(current != end->next){\
 			next = current->next;\
 			free(current);\

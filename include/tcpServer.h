@@ -15,12 +15,11 @@
 
 #include "str.h"
 #include "bytestream.h"
-#include "dynArray.h"
 #include "tcpServerClient.h"
 
 typedef struct cutilsTcpServer{
 	int sockfd;
-	cutilsTcpServerClientArr clients;
+	cutilsTcpServerClientLL clients;
 
 	#ifndef CUTILS_NO_LIBEVENT
 	struct event_base *eb;
@@ -69,6 +68,6 @@ int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd,
 int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd,
 	struct sockaddr addr, socklen_t addrLen);
 #endif
-void cutilsTcpServerRemoveClient(cutilsTcpServer *server, size_t index);
+void cutilsTcpServerRemoveClient(cutilsTcpServer *server, cutilsTcpServerClient *client);
 
 #endif

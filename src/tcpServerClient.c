@@ -2,7 +2,7 @@
 
 typedef struct cutilsTcpServer{
 	int sockfd;
-	cutilsTcpServerClientArr clients;
+	cutilsTcpServerClientLL clients;
 
 	#ifndef CUTILS_NO_LIBEVENT
 	struct event_base *eb;
@@ -86,9 +86,12 @@ void cutilsTcpServerClientDeinit(cutilsTcpServerClient *client){
 	client->server = NULL;
 }
 
-CUTILS_DEF_DYNARRAY_C(cutilsTcpServerClient, cutilsTcpServerClientArr, cutilsTcpServerClientArrDeinitCallback);
-void cutilsTcpServerClientArrDeinitCallback(cutilsTcpServerClient *arr, size_t count, void *userData){
+CUTILS_DEF_LINKED_LIST_C(cutilsTcpServerClient, cutilsTcpServerClientLL, cutilsTcpServerClientLLDeinitCallback);
+
+void cutilsTcpServerClientLLDeinitCallback(cutilsTcpServerClientLLNode *node, size_t count, void *userData){
 	for(size_t i = 0; i < count; i++){
-		cutilsTcpServerClientDeinit(arr+i);
+		cutilsTcpServerClientLLNode *next = node->next;
+		cutilsTcpServerClientDeinit(&node->data);
+		node = next;
 	}
 }

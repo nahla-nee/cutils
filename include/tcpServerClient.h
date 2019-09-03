@@ -14,8 +14,10 @@
 #include "errors.h"
 #include "str.h"
 #include "bytestream.h"
+#include "linkedList.h"
 
 typedef struct cutilsTcpServer cutilsTcpServer;
+typedef struct cutilsTcpServerClientLLNode cutilsTcpServerClientLLNode;
 
 typedef struct cutilsTcpServerClient{
 	int sockfd;
@@ -27,6 +29,8 @@ typedef struct cutilsTcpServerClient{
 	cutilsTcpServer *server;
 	cutilsString address;
 	cutilsByteStream buffer;
+
+	cutilsTcpServerClientLLNode *node;
 } cutilsTcpServerClient;
 
 #ifndef CUTILS_NO_LIBEVENT
@@ -38,8 +42,8 @@ int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, cutilsT
 #endif
 void cutilsTcpServerClientDeinit(cutilsTcpServerClient *client);
 
-void cutilsTcpServerClientArrDeinitCallback(cutilsTcpServerClient *arr, size_t count, void *userData);
+CUTILS_DEF_LINKED_LIST_H(cutilsTcpServerClient, cutilsTcpServerClientLL);
 
-CUTILS_DEF_DYNARRAY_H(cutilsTcpServerClient, cutilsTcpServerClientArr);
+void cutilsTcpServerClientLLDeinitCallback(cutilsTcpServerClientLLNode *node, size_t count, void *userData);
 
 #endif
