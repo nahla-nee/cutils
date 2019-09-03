@@ -86,9 +86,9 @@ void cutilsTcpServerClientDeinit(cutilsTcpServerClient *client){
 	client->server = NULL;
 }
 
-CUTILS_DEF_LINKED_LIST_C(cutilsTcpServerClient, cutilsTcpServerClientLL, cutilsTcpServerClientLLDeinitCallback);
+CUTILS_DEF_LINKED_LIST_C(cutilsTcpServerClient, cutilsTcpServerClientLL, cutilsTcpServerClientLLRemoveCallback);
 
-void cutilsTcpServerClientLLDeinitCallback(cutilsTcpServerClientLLNode *node, size_t count, void *userData){
+void cutilsTcpServerClientLLRemoveCallback(cutilsTcpServerClientLLNode *node, size_t count, void *userData){
 	for(size_t i = 0; i < count; i++){
 		cutilsTcpServerClientLLNode *next = node->next;
 		cutilsTcpServerClientDeinit(&node->data);
