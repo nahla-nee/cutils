@@ -1,8 +1,8 @@
-#cliOptions
+# cliOptions
 
 A struct, with helper functions to quickly, and easily identify what cli options have been passed to the program.
 
-##Struct
+## Struct
 
 `shortFlag` The short version of the cli option to test for. If set to `NULL` it will be ignored.
 
@@ -18,6 +18,8 @@ typedef struct cutilsCliOption{
 	int index;
 } cutilsCliOption;
 ```
+
+# Functions
 
 >`void cutilsCliOptionFindArr(cutilsCliOption *options, size_t size, int argc, char **argv)`
 

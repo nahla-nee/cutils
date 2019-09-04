@@ -1,8 +1,8 @@
-#logger
+# logger
 
 A simple logging utility
 
-##Enum
+## Enum
 
 ```c
 typedef enum cutilsLogLevel{
@@ -13,7 +13,7 @@ typedef enum cutilsLogLevel{
 } cutilsLogLevel;
 ```
 
-##Struct
+## Struct
 
 `info` file to print to when logging info level messages.
 
@@ -36,6 +36,8 @@ typedef struct cutilsLogger{
 	enum cutilsLogLevel logLevel;
 } cutilsLogger;
 ```
+
+## Functions
 
 >`void cutilsLoggerInit(cutilsLogger *logger, cutilsLogLevel level)`
 

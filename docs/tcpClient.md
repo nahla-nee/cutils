@@ -1,10 +1,10 @@
-#tcpClient
+# tcpClient
 
 A struct to esablish a tcp connection. This struct, and all the other networking structs offer optional libevent integration.
 
 There are functions in this docpage that have the same name. This is because some of them are made for libevent integration while others are not. Only one or the other will be defined.
 
-##Struct
+## Struct
 
 `sockfd` the socket file descriptor.
 
@@ -38,6 +38,8 @@ typedef struct cutilsTcpClient{
 	bool connected;
 } cutilsTcpClient;
 ```
+
+## Functions
 
 >`int cutilsTcpClientInit(cutilsTcpClient *client, size_t bufferSize)`
 

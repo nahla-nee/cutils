@@ -1,10 +1,10 @@
-#tcpServer
+# tcpServer
 
 A struct to create a tcp server. This struct, and all other networking structs offer optional libevent integration.
 
 There are functions in this docpage that have the same name. This is because some of them are made for libevent integration while others are not. Only one or the other will be defined.
 
-##Struct
+## Struct
 
 `sockfd` The server's listening socket.
 
@@ -51,6 +51,8 @@ typedef struct cutilsTcpServer{
 	bool started;
 } cutilsTcpServer;
 ```
+
+## Functions
 
 >`int cutilsTcpServerInit(cutilsTcpServer *server, size_t clientBufferSize)`
 

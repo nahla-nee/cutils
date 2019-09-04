@@ -1,10 +1,10 @@
-#dynArray
+# dynArray
 
 A way to define a dynamic array struct for any given data type through two macros.
 `CUTILS_DEF_DYNARRAY_H` which defines the appropriate header info (struct and function
 prototypes), and `CUTILS_DEF_DYNARRAY_C` which define the functions.
 
-##Struct
+## Struct
 
 `data` pointer to the data allocated.
 
@@ -25,6 +25,8 @@ typedef struct NAME{
 	NAME##RemoveFn callback;
 } NAME;
 ```
+
+## Functions
 
 >`CUTILS_DEF_DYNARRAY_H(TYPE, NAME)`
 

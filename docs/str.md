@@ -1,10 +1,10 @@
-#String
+# String
 
 a struct to handle dynamic string management. Every so slightly different from dynArray because it's null terminated.
 
 This struct defines a dynArray of itself called `cutilsStringArr` along with its own default callback function.
 
-##Struct
+## Struct
 
 `str` Null terminated char array.
 
@@ -21,6 +21,8 @@ typedef struct cutilsString{
 	size_t capacity;
 } cutilsString;
 ```
+
+## Functions
 
 >`int cutilsStringInit(cutilsString *str, size_t capacity)`
 

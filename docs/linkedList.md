@@ -1,10 +1,10 @@
-#linkedList
+# linkedList
 
 A way to define a linked list for any given type through two macros.
 `CUTILS_DEF_LINKED_LIST_H` which defines the appropriate header info (struct and function
 prototypes), and `CUTILS_DEF_LINKED_LIST_C` which define the functions.
 
-##Struct
+## Struct
 
 `head` First node in the list.
 
@@ -42,6 +42,8 @@ typedef struct NAME##Node{
 	struct NAME *list;
 } NAME##Node;
 ```
+
+## Functions
 
 >`CUTILS_DEF_LINKED_LIST_H(TYPE, NAME)`
 

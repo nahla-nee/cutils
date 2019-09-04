@@ -1,8 +1,8 @@
-#file
+# file
 
 Allows for slightly better i/o. Just does stuff idk man, I'll document it later.
 
-##Struct
+## Struct
 
 `file` The actual file pointer used for i/o.
 
@@ -37,6 +37,8 @@ typedef struct cutilsFile{
 	bool open;
 } cutilsFile;
 ```
+
+## Functions
 
 >`void cutilsFileInit(cutilsFile *file)`
 
