@@ -43,19 +43,21 @@ bool cutilsCliOptionFind(cutilsCliOption *option, int argc, char **argv){
 }
 
 int cutilsCliOptionFindFlag(char *flag, int argc, char **argv){
+	int index = -1;
 	for(int i = 1; i < argc; i++){
 		if(strcmp(argv[i], flag) == 0){
-			return i;
+			index = i;
 		}
 	}
-	return -1;
+	return i;
 }
 
 int cutilsCliOptionFindFlags(char *shortFlag, char *longFlag, int argc, char **argv){
+	int index = -1;
 	for(int i = 1; i < argc; i++){
 		if(strcmp(argv[i], shortFlag) == 0 || strcmp(argv[i], longFlag) == 0){
-			return i;
+			index = i;
 		}
 	}
-	return -1;
+	return i;
 }
