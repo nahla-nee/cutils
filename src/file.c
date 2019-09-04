@@ -115,43 +115,19 @@ void cutilsFileFree(cutilsFile *file){
 }
 
 size_t cutilsFileReadString(cutilsFile *file, cutilsString *string){
-	if(string->len < file->size){
-		int err = cutilsStringResize(string, file->size);
-		if(err != CUTILS_OK){
-			return 0;
-		}
-	}
 	return cutilsFileRead(file, string->str);
 }
 
 size_t cutilsFileReadStringSize(cutilsFile *file, cutilsString *string, size_t size){
-	if(string->len < size){
-		int err = cutilsStringResize(string, size);
-		if(err != CUTILS_OK){
-			return 0;
-		}
-	}
-	return cutilsFileReadSize(file, string->str, string->len);
+	return cutilsFileReadSize(file, string->str, size);
 }
 
 size_t cutilsFileReadByteStream(cutilsFile *file, cutilsByteStream *stream){
-	if(stream->size < file->size){
-		int err = cutilsByteStreamResize(stream, file->size);
-		if(err != CUTILS_OK){
-			return 0;
-		}
-	}
 	return cutilsFileRead(file, stream->data);
 }
 
 size_t cutilsFileReadByteStreamSize(cutilsFile *file, cutilsByteStream *stream, size_t size){
-	if(stream->size < size){
-		int err = cutilsByteStreamResize(stream, size);
-		if(err != CUTILS_OK){
-			return 0;
-		}
-	}
-	return cutilsFileReadSize(file, stream->data, stream->size);
+	return cutilsFileReadSize(file, stream->data, size);
 }
 
 size_t cutilsFileRead(cutilsFile *file, void *data){
