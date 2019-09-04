@@ -1,15 +1,23 @@
 #include "cliOptions.h"
 
-void cutilsCliOptionFindArr(cutilsCliOption *option, size_t size, int argc, char **argv){
+void cutilsCliOptionFindArr(cutilsCliOption *options, size_t size, int argc, char **argv){
 	for(size_t i = 0; i < size; i++){
-		option[i].index = -1;
+		options[i].index = -1;
 	}
 
 	for(int i = 1; i < argc; i++){
 		for(size_t j = 0; j < size; j++){
-			if(strcmp(argv[i], option[j].shortFlag) == 0 || strcmp(argv[i], option[j].longFlag) == 0){
-				option->index = i;
-				break;
+			if(options[j].shortFlag != NULL){
+				if(strcmp(argv[i], options[j].shortFlag) == 0){
+					options[j].index = i;
+					break;
+				}
+			}
+			if(options[j].longFlag != NULL){
+				if(strcmp(argv[i], options[j].longFlag) == 0){
+					options[j].index = i;
+					break;
+				}
 			}
 		}
 	}
@@ -17,9 +25,17 @@ void cutilsCliOptionFindArr(cutilsCliOption *option, size_t size, int argc, char
 
 bool cutilsCliOptionFind(cutilsCliOption *option, int argc, char **argv){
 	for(int i = 1; i < argc; i++){
-		if(strcmp(argv[i], option->shortFlag) == 0 || strcmp(argv[i], option->longFlag) == 0){
-			option->index = i;
-			return true;
+		if(option->shortFlag != NULL){
+			if(strcmp(argv[i], option->shortFlag) == 0){
+				option->index = i;
+				break;
+			}
+		}
+		if(option->longFlag != NULL){
+			if(strcmp(argv[i], option->longFlag) == 0){
+				option->index = i;
+				break;
+			}
 		}
 	}
 	option->index = -1;
