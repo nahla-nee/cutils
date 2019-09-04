@@ -156,6 +156,6 @@ size_t cutilsFileWriteByteStreamSize(cutilsFile *file, cutilsByteStream *stream,
 	return cutilsFileWrite(file, stream->data, size);
 }
 
-size_t cutilsFileWrite(cutilsFile *file, void *buffer, size_t size){
+size_t cutilsFileWrite(cutilsFile *file, void *data, size_t size){
 	return fwrite(data, 1, size, file->file);
 }

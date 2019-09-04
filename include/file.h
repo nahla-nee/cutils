@@ -50,6 +50,6 @@ size_t cutilsFileWriteStringSize(cutilsFile *file, cutilsString *string, size_t 
 size_t cutilsFileWriteByteStream(cutilsFile *file, cutilsByteStream *stream);
 size_t cutilsFileWriteByteStreamSize(cutilsFile *file, cutilsByteStream *stream, size_t size);
 
-size_t cutilsFileWrite(cutilsFile *file, void *buffer, size_t size);
+size_t cutilsFileWrite(cutilsFile *file, void *data, size_t size);
 
 #endif
