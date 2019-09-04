@@ -45,19 +45,19 @@ the callback function type. Gives you a pointer the first elemenet being removed
 
 initializes struct struct and allocates `size` amount of members of the struct's data type.
 
-This function returns `CUTILS_OK` if no errors occured, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
 
 >`NAME* NAME##New(size_t size)`
 
 allocates a `NAME` struct and calls `NAME##Init` on it with the given `size`.
 
-This function returns a pointer to a `NAME` struct if no errors occured, or `NULL` if it failed to allocate, or intialize the struct.
+This function returns a pointer to a `NAME` struct if no errors occurred, or `NULL` if it failed to allocate, or intialize the struct.
 
 >`int NAME##Copy(NAME *dst, NAME *src)`
 
 Resizes `dst` to be the same size as `src`, and copies all data from src to dst.
 
-This function returns `CUTILS_OK` if no errors occured, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
 
 >`void NAME##Move(NAME *dst, NAME *src)`
 
@@ -87,58 +87,58 @@ Sets `arr->callback` to `callback`.
 
 Attempts to resize the string to hold `size` members.
 
-This function returns `CUTILS_OK` if no errors occured, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
 
 >`int NAME##Reserve(NAME *arr, size_t capacity)`
 
 Attempts to reallocate the buffer to have a max capacity of `capacity`.
 
-This function returns `CUTILS_OK` if no errors occured, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
 
 >`int NAME##PushBack(NAME *arr, TYPE x)`
 
 Attempts to append `x` to the end of the array.
 
-This function returns `CUTILS_OK` if no errors occured, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
 
 >`int NAME##PushBackPtr(NAME *arr, TYPE *x, size_t len)`
 
 Attempts to append `x` to the end of the array.
 
-This function returns `CUTILS_OK` if no errors occured, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
 
 >`int NAME##PushBackArr(NAME *arr, NAME *x)`
 
 Attempts to append `x` to the end of the array.
 
-This function returns `CUTILS_OK` if no errors occured, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
 
 >`int NAME##Insert(NAME *arr, TYPE x, size_t index)`
 
 Attempts to insert `x` into `arr` at `index`.
 
-This function returns `CUTILS_OK` if no errors occured, `CUTILS_OUT_OF_BOUNDS` if `index` was greater than `arr->size`, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+This function returns `CUTILS_OK` if no errors occurred, `CUTILS_OUT_OF_BOUNDS` if `index` was greater than `arr->size`, or `CUTILS_NOMEM` if it failed to allocate the required memory.
 
 >`int NAME##InsertPtr(NAME *arr, TYPE *x, size_t len, size_t index)`
 
 Attempts to insert `x` into `arr` at `index`.
 
-This function returns `CUTILS_OK` if no errors occured, `CUTILS_OUT_OF_BOUNDS` if `index` was greater than `arr->size`, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+This function returns `CUTILS_OK` if no errors occurred, `CUTILS_OUT_OF_BOUNDS` if `index` was greater than `arr->size`, or `CUTILS_NOMEM` if it failed to allocate the required memory.
 
 >`int NAME##InsertArr(NAME *arr, NAME *x, size_t index)`
 
 Attempts to insert `x` into `arr` at `index`.
 
-This function returns `CUTILS_OK` if no errors occured, `CUTILS_OUT_OF_BOUNDS` if `index` was greater than `arr->size`, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+This function returns `CUTILS_OK` if no errors occurred, `CUTILS_OUT_OF_BOUNDS` if `index` was greater than `arr->size`, or `CUTILS_NOMEM` if it failed to allocate the required memory.
 
 >`int NAME##Delete(NAME *arr, size_t index)`
 
 Attempts to remove data at `index` from `arr`.
 
-This function returns `CUTILS_OK` if not errors occured, or `CUTILS_OUT_OF_BOUNDS` if `index` was greater than or equal to `arr->size`.
+This function returns `CUTILS_OK` if not errors occurred, or `CUTILS_OUT_OF_BOUNDS` if `index` was greater than or equal to `arr->size`.
 
 >`int NAME##DeleteRange(NAME *arr, size_t start, size_t end)`
 
 Attempts to remove all data between `start`, and `end` from `arr`.
 
-This function returns `CUTILS_OK` if not errors occured, or `CUTILS_OUT_OF_BOUNDS` if `index` was greater than or equal to `arr->size`.
+This function returns `CUTILS_OK` if not errors occurred, or `CUTILS_OUT_OF_BOUNDS` if `index` was greater than or equal to `arr->size`.

@@ -58,13 +58,13 @@ typedef struct cutilsTcpServer{
 
 intitializes the server, and sets the default buffer size for clients.
 
-This function returns `CUTILS_OK` if no errors occured, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
 
 >`cutilsTcpServer* cutilsTcpServerNew(size_t clientBufferSize)`
 
 Allocates a `cutilsTcpServer` and intializes it with `clientBufferSize`.
 
-This function returns a pointer to a `cutilsTcpServer` struct if no errors occured, or `NULL` if it failed to allocate memory for the struct, or initialize it.
+This function returns a pointer to a `cutilsTcpServer` struct if no errors occurred, or `NULL` if it failed to allocate memory for the struct, or initialize it.
 
 >`void cutilsTcpServerDeinit(cutilsTcpServer *server)`
 
@@ -76,9 +76,9 @@ Stops the server if it is started, deintializes the server, and frees all its me
 
 >`int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog, event_callback_fn callback)`
 
-Starts the server on `port` with a backlog of `backlog`. If the server is already running it will close it, and open it again with the given port, and backlog. Will assign `callback` to be the function call back if `server->sockfd` is ready for reading. adds `server->ev` to `server->eb` with the flags `EV_READ | EV_PERSIST`, and the user pointer points to `server`.
+Starts the server on `port` with a backlog of `backlog`. If the server is already running it will close it, and open it again with the given port, and backlog. Will assign `callback` to be the function call back if `server->sockfd` is ready for reading. adds `server->ev` to `server->eb` with the flags `EV_READ | EV_PERSIST`, and the user pointer points to `server`. You can pass `NULL` for `callback` if you don't want to use libevent.
 
-This function returns `CUTILS_OK` if no errors occured, `CUTILS_GETADDRINFO` if the call to `getaddrinfo` failed, `CUTILS_SOCKET` if it failed to create a listening socket, or `CUTILS_EVENT_CREATE` if it failed to allocate, or add the event.
+This function returns `CUTILS_OK` if no errors occurred, `CUTILS_GETADDRINFO` if the call to `getaddrinfo` failed, `CUTILS_SOCKET` if it failed to create a listening socket, or `CUTILS_EVENT_CREATE` if it failed to allocate, or add the event.
 
 >`int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog)`
 
@@ -127,7 +127,7 @@ With libevent integration only. Tells the server not to usre a timeout for the c
 
 Adds a client to the back of the linked list of clients. `callback` will be called when the client sockfd is ready for reading. Adds the clients event to `server->eb` with the flags `EV_READ | EV_PERSIST`. The user pointer will point to the client struct.
 
-This function returns `CUTILS_OK` if no error occured, `CUTILS_NOMEM` if it failed to allocate the required memory, or `CUTILS_CREATE_EVENT` if it failed to allocate or add the event to `server->eb`.
+This function returns `CUTILS_OK` if no error occurred, `CUTILS_NOMEM` if it failed to allocate the required memory, or `CUTILS_CREATE_EVENT` if it failed to allocate or add the event to `server->eb`.
 
 >`int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd,
 	struct sockaddr addr, socklen_t addrLen)`

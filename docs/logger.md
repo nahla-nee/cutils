@@ -47,7 +47,7 @@ Initializes the logger files, and sets `logger->logLevel` to `level`.
 
 Allocates a new `cutilsLogger` struct, and intializes it with `level`.
 
-This function returns a pointer to a `cutilsLogger` struct if no errors occured, or `NULL` if it could not allocate the memory required for the struct.
+This function returns a pointer to a `cutilsLogger` struct if no errors occurred, or `NULL` if it could not allocate the memory required for the struct.
 
 >`void cutilsLoggerDeinit(cutilsLogger *logger)`
 

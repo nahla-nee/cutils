@@ -48,19 +48,19 @@ Initializes the file structure.
 
 Allocates a new `cutilsFile` struct, and intializes it.
 
-This function returns a pointer to a `cutilsFile` struct if no errors occured, or `NULL` if it could not allocate the required memory for the struct.
+This function returns a pointer to a `cutilsFile` struct if no errors occurred, or `NULL` if it could not allocate the required memory for the struct.
 
 >`int cutilsFileOpen(cutilsFile *file, const char *filepath, const char *filemode)`
 
 Opens the file at `filepath` with `filemode`. If `file` points to an already open file struct, it will be closed.
 
-This function returns `CUTILS_OK` if no errors occured, or `CUTILS_FOPEN` if it failed to open the file.
+This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_FOPEN` if it failed to open the file.
 
 >`int cutilsFileCopy(cutilsFile *dst, cutilsFile *src)`
 
 Opens the file a copy of the file that `src` points to, with `src->mode`. `dst` points to an open file it will be closed.
 
-This function returns `CUTILS_OK` if no errors occured, or `CUTILS_FOPEN` if it failed to open teh file. In case of an error occuring the original values of `dst` are presevred.
+This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_FOPEN` if it failed to open teh file. In case of an error occuring the original values of `dst` are presevred.
 
 >`void cutilsFileMove(cutilsFile *dst, cutilsFile *src)`
 

@@ -45,13 +45,13 @@ typedef struct cutilsTcpClient{
 
 Initializes the client, and gives the buffer a size of `bufferSize`. Will also allocate the event_base if libevent integration is enabled.
 
-This function returns `CUTILS_OK` if no errors occured, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
 
 >`cutilsTcpClient* cutilsTcpClientNew(size_t bufferSize)`
 
 Allocates a `cutilsTcpClient` struct, and intializes it with `bufferSize`.
 
-This function returns a pointer to a `cutilsTcpClient` struct if no errors occured, or a `NULL` pointer if it failed to allocte the struct, or initialize it.
+This function returns a pointer to a `cutilsTcpClient` struct if no errors occurred, or a `NULL` pointer if it failed to allocte the struct, or initialize it.
 
 >`void cutilsTcpClientDeinit(cutilsTcpClient *client)`
 
@@ -63,9 +63,9 @@ This function deintializes, and frees all data allocated by the client. It also 
 
 >`int cutilsTcpClientConnect(cutilsTcpClient *client, const char *address, const char *port, event_callback_fn callback)`
 
-Attempts to connect to the server specified by `address`, and `port`. It also creates, and adds the socket to `client->eb` with the flags `EV_READ | EV_PERSIST`, and the callback `callback`. The user pointer sent to callback will be a pointer to `client`.
+Attempts to connect to the server specified by `address`, and `port`. It also creates, and adds the socket to `client->eb` with the flags `EV_READ | EV_PERSIST`, and the callback `callback`. The user pointer sent to callback will be a pointer to `client`. You can pass `NULL` for `callback` if you don't want to use libevent.
 
-This function returns `CUTILS_OK` if no errors occured, `CUTILS_GETADDRINFO` if the call to `getaddrinfo` failed, `CUTILS_SOCKET` if it failed to create, and connect a socket to the server, or `CUTILS_CREATE_EVENT` if it failed to allocate, or add the event to `client->eb`. 
+This function returns `CUTILS_OK` if no errors occurred, `CUTILS_GETADDRINFO` if the call to `getaddrinfo` failed, `CUTILS_SOCKET` if it failed to create, and connect a socket to the server, or `CUTILS_CREATE_EVENT` if it failed to allocate, or add the event to `client->eb`. 
 
 >`int cutilsTcpClientConnect(cutilsTcpClient *client, const char *address, const char *port)`
 
