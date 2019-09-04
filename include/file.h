@@ -35,14 +35,21 @@ void cutilsFileClose(cutilsFile *file);
 void cutilsFileDeinit(cutilsFile *file);
 void cutilsFileFree(cutilsFile *file);
 
-int cutilsFileRead(cutilsFile *file, cutilsByteStream *stream);
-int cutilsFileReadIndex(cutilsFile *file, cutilsByteStream *stream, size_t index);
-int cutilsFileReadBytes(cutilsFile *file, cutilsByteStream *stream, size_t bytes);
-int cutilsFileReadBytesIndex(cutilsFile *file, cutilsByteStream *stream, size_t bytes, size_t index);
+size_t cutilsFileReadString(cutilsFile *file, cutilsString *string);
+size_t cutilsFileReadStringSize(cutilsFile *file, cutilsString *string, size_t size);
 
-int cutilsFileWrite(cutilsFile *file, cutilsByteStream *stream);
-int cutilsFileWriteIndex(cutilsFile *file, cutilsByteStream *stream, size_t index);
-int cutilsFileWriteBytes(cutilsFile *file, cutilsByteStream *stream, size_t bytes);
-int cutilsFileWriteBytesIndex(cutilsFile *file, cutilsByteStream *stream, size_t bytes, size_t index);
+size_t cutilsFileReadByteStream(cutilsFile *file, cutilsByteStream *stream);
+size_t cutilsFileReadByteStreamSize(cutilsFile *file, cutilsByteStream *stream, size_t size);
+
+size_t cutilsFileRead(cutilsFile *file, void *data);
+size_t cutilsFileReadSize(cutilsFile *file, void *data, size_t size);
+
+size_t cutilsFileWriteString(cutilsFile *file, cutilsString *string);
+size_t cutilsFileWriteStringSize(cutilsFile *file, cutilsString *string, size_t size);
+
+size_t cutilsFileWriteByteStream(cutilsFile *file, cutilsByteStream *stream);
+size_t cutilsFileWriteByteStreamSize(cutilsFile *file, cutilsByteStream *stream, size_t size);
+
+size_t cutilsFileWrite(cutilsFile *file, void *buffer, size_t size);
 
 #endif

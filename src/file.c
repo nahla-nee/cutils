@@ -98,56 +98,70 @@ void cutilsFileFree(cutilsFile *file){
 	free(file);
 }
 
-int cutilsFileRead(cutilsFile *file, cutilsByteStream *stream){
-	return cutilsFileReadBytesIndex(file, stream, file->size, 0);
-}
-
-int cutilsFileReadIndex(cutilsFile *file, cutilsByteStream *stream, size_t index){
-	return cutilsFileReadBytesIndex(file, stream, file->size, index);
-}
-
-int cutilsFileReadBytes(cutilsFile *file, cutilsByteStream *stream, size_t bytes){
-	return cutilsFileReadBytesIndex(file, stream, bytes, 0);
-}
-
-int cutilsFileReadBytesIndex(cutilsFile *file, cutilsByteStream *stream, size_t bytes, size_t index){
-	if(index > stream->size){
-		return CUTILS_OUT_OF_BOUNDS;
-	}
-
-	if(bytes > (stream->size-index)){
-		int err = cutilsByteStreamResize(stream, bytes+stream->size);
+size_t cutilsFileReadString(cutilsFile *file, cutilsString *string){
+	if(string->len < file->size){
+		int err = cutilsStringResize(string, file->size);
 		if(err != CUTILS_OK){
-			return err;
+			return 0;
 		}
 	}
-	memmove(stream->data+index+bytes, stream->data+index, bytes);
+	return cutilsFileRead(file, string->str);
+}
 
-	size_t bytesRead = fread(stream->data+index, 1, bytes, file->file);
-	if(bytesRead != bytes){
-		return CUTILS_BAD_READ;
+size_t cutilsFileReadStringSize(cutilsFile *file, cutilsString *string, size_t size){
+	if(string->len < size){
+		int err = cutilsStringResize(string, size);
+		if(err != CUTILS_OK){
+			return 0;
+		}
 	}
-
-	return CUTILS_OK;
+	return cutilsFileReadSize(file, string->str, string->len);
 }
 
-int cutilsFileWrite(cutilsFile *file, cutilsByteStream *stream){
-	return cutilsFileWriteBytesIndex(file, stream, stream->size, 0);
-}
-
-int cutilsFileWriteIndex(cutilsFile *file, cutilsByteStream *stream, size_t index){
-	return cutilsFileWriteBytesIndex(file, stream, stream->size, index);
-}
-
-int cutilsFileWriteBytes(cutilsFile *file, cutilsByteStream *stream, size_t bytes){
-	return cutilsFileWriteBytesIndex(file, stream, bytes, 0);
-}
-
-int cutilsFileWriteBytesIndex(cutilsFile *file, cutilsByteStream *stream, size_t bytes, size_t index){
-	size_t bytesWritten = fwrite(stream->data, 1, bytes, file->file);
-	if(bytesWritten != bytes){
-		return CUTILS_BAD_WRITE;
+size_t cutilsFileReadByteStream(cutilsFile *file, cutilsByteStream *stream){
+	if(stream->size < file->size){
+		int err = cutilsByteStreamResize(stream, file->size);
+		if(err != CUTILS_OK){
+			return 0;
+		}
 	}
+	return cutilsFileRead(file, stream->data);
+}
 
-	return CUTILS_OK;
+size_t cutilsFileReadByteStreamSize(cutilsFile *file, cutilsByteStream *stream, size_t size){
+	if(stream->size < size){
+		int err = cutilsByteStreamResize(stream, size);
+		if(err != CUTILS_OK){
+			return 0;
+		}
+	}
+	return cutilsFileReadSize(file, stream->data, stream->size);
+}
+
+size_t cutilsFileRead(cutilsFile *file, void *data){
+	return fread(data, 1, file->size, file->file);
+}
+
+size_t cutilsFileReadSize(cutilsFile *file, void *data, size_t size){
+	return fread(data, 1, size, file->file);
+}
+
+size_t cutilsFileWriteString(cutilsFile *file, cutilsString *string){
+	return cutilsFileWrite(file, string->str, string->len);
+}
+
+size_t cutilsFileWriteStringSize(cutilsFile *file, cutilsString *string, size_t size){
+	return cutilsFileWrite(file, string->str, size);
+}
+
+size_t cutilsFileWriteByteStream(cutilsFile *file, cutilsByteStream *stream){
+	return cutilsFileWrite(file, stream->data, stream->size);
+}
+
+size_t cutilsFileWriteByteStreamSize(cutilsFile *file, cutilsByteStream *stream, size_t size){
+	return cutilsFileWrite(file, stream->data, size);
+}
+
+size_t cutilsFileWrite(cutilsFile *file, void *buffer, size_t size){
+	return fwrite(data, 1, size, file->file);
 }
