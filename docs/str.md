@@ -141,3 +141,21 @@ This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_OUT_OF_BOUND
 Attempts to remove all chars from `start` to `end` from `str`.
 
 This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_OUT_OF_BOUNDS` if `index` is greater than `str->len`.
+
+>`cutilsStringAppend(STR, X)`
+
+A macro that determines the type of `X`, and calls the appropriate append function.
+
+This macro returns the value of the function it calls.
+
+>`cutilsStringInsert(STR, X, INDEX)`
+
+A macro that determines the type of `X`, and calls the appropriate insert function.
+
+This macro returns the value of the function it calls.
+
+>`cutilsStringSet(STR, X)`
+
+Determines the type of `X`, and calls the appropriate set function.
+
+This macro returns the value of the function it calls.
