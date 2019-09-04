@@ -143,6 +143,7 @@ size_t cutilsFileWriteString(cutilsFile *file, cutilsString *string){
 }
 
 size_t cutilsFileWriteStringSize(cutilsFile *file, cutilsString *string, size_t size){
+	size = size > string->len?string->len:size;
 	return cutilsFileWrite(file, string->str, size);
 }
 
@@ -151,6 +152,7 @@ size_t cutilsFileWriteByteStream(cutilsFile *file, cutilsByteStream *stream){
 }
 
 size_t cutilsFileWriteByteStreamSize(cutilsFile *file, cutilsByteStream *stream, size_t size){
+	size = size > stream->size?string->size:size;
 	return cutilsFileWrite(file, stream->data, size);
 }
 
