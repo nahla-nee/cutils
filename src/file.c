@@ -4,6 +4,7 @@ void cutilsFileInit(cutilsFile *file){
 	file->file = NULL;
 	cutilsStringInit(&file->path, 0);
 	cutilsStringInit(&file->mode, 0);
+	file->read = file->write = file->binary = file->append = file->open = false;
 }
 
 cutilsFile* cutilsFileNew(){
@@ -16,6 +17,10 @@ cutilsFile* cutilsFileNew(){
 }
 
 int cutilsFileOpen(cutilsFile *file, const char *filepath, const char *filemode){
+	if(file->open){
+		cutilsFileClose(file);
+	}
+
 	cutilsStringSet(&file->path, filepath);
 	cutilsStringSet(&file->mode, filemode);
 
@@ -55,7 +60,7 @@ int cutilsFileCopy(cutilsFile *dst, cutilsFile *src){
 	to find out that we couldn't open the file anyway
 	*/
 	cutilsFile tmp;
-	int err =cutilsFileOpen(&tmp, src->path.str, src->mode.str);
+	int err = cutilsFileOpen(&tmp, src->path.str, src->mode.str);
 	if(err != CUTILS_OK){
 		return err;
 	}
@@ -80,17 +85,28 @@ void cutilsFileSwap(cutilsFile *a, cutilsFile *b){
 }
 
 void cutilsFileClose(cutilsFile *file){
+	if(!file->open){
+		return;
+	}
+
 	fclose(file->file);
 	file->file = NULL;
 	cutilsStringSet(&file->path, "");
 	cutilsStringSet(&file->mode, "");
+
+	file->read = file->write = file->binary = file->append = file->open = false;
 }
 
 void cutilsFileDeinit(cutilsFile *file){
-	fclose(file->file);
-	file->file = NULL;
+	if(file->open){
+		fclose(file->file);
+		file->file = NULL;
+	}
+
 	cutilsStringDeinit(&file->path);
 	cutilsStringDeinit(&file->mode);
+
+	file->read = file->write = file->binary = file->append = file->open = false;
 }
 
 void cutilsFileFree(cutilsFile *file){
