@@ -27,7 +27,8 @@ typedef struct cutilsTcpClient{
 	#endif
 
 	cutilsString server;
-	cutilsByteStream buffer;
+	cutilsByteStream inBuffer;
+	cutilsByteStream outBuffer;
 	bool connected;
 } cutilsTcpClient;
 

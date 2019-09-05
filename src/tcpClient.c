@@ -7,9 +7,16 @@ int cutilsTcpClientInit(cutilsTcpClient *client, size_t bufferSize){
 		return err;
 	}
 
-	err = cutilsByteStreamInit(&client->buffer, bufferSize);
+	err = cutilsByteStreamInit(&client->inBuffer, bufferSize);
 	if(err != CUTILS_OK){
 		cutilsStringDeinit(&client->server);
+		return err;
+	}
+
+	err = cutilsByteStreamInit(&client->outBuffer, bufferSize);
+	if(err != CUTILS_OK){
+		cutilsStringDeinit(&client->server);
+		cutilsByteStreamDeinit(&client->inBuffer);
 		return err;
 	}
 
@@ -17,7 +24,8 @@ int cutilsTcpClientInit(cutilsTcpClient *client, size_t bufferSize){
 	client->eb = event_base_new();
 	if(client->eb == NULL){
 		cutilsStringDeinit(&client->server);
-		cutilsByteStreamDeinit(&client->buffer);
+		cutilsByteStreamDeinit(&client->inBuffer);
+		cutilsByteStreamDeinit(&client->outBuffer);
 		return CUTILS_NOMEM;
 	}
 
@@ -45,7 +53,9 @@ cutilsTcpClient* cutilsTcpClientNew(size_t bufferSize){
 void cutilsTcpClientDeinit(cutilsTcpClient *client){
 	cutilsTcpClientDisconnect(client);
 	cutilsStringDeinit(&client->server);
-	cutilsByteStreamDeinit(&client->buffer);
+	cutilsByteStreamDeinit(&client->inBuffer);
+	cutilsByteStreamDeinit(&client->outBuffer);
+
 	#ifndef CUTILS_NO_LIBEVENT
 	event_base_free(client->eb);
 	client->eb = NULL;

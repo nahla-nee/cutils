@@ -28,7 +28,8 @@ typedef struct cutilsTcpServerClient{
 
 	cutilsTcpServer *server;
 	cutilsString address;
-	cutilsByteStream buffer;
+	cutilsByteStream inBuffer;
+	cutilsByteStream outBuffer;
 
 	cutilsTcpServerClientLLNode *node;
 } cutilsTcpServerClient;

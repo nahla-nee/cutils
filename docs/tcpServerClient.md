@@ -13,7 +13,9 @@ The struct `tcpServer` uses to represent clients. This header also defines a lin
 
 `address` The client's address.
 
-`buffer` The client's buffer.
+`inBuffer` The client's input buffer.
+
+`outBuffer` The client's output buffer.
 
 `node` A pointer to the node that contains this struct. This is set by the server struct once the client is added to the list of clients
 
@@ -27,7 +29,8 @@ typedef struct cutilsTcpServerClient{
 
 	cutilsTcpServer *server;
 	cutilsString address;
-	cutilsByteStream buffer;
+	cutilsByteStream inBuffer;
+	cutilsByteStream outBuffer;
 
 	cutilsTcpServerClientLLNode *node;
 } cutilsTcpServerClient;

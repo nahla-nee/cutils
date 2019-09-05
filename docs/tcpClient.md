@@ -18,7 +18,9 @@ There are functions in this docpage that have the same name. This is because som
 
 `server` The string address of the server we are connected to.
 
-`buffer` A buffer used to communicate with the server.
+`inBuffer` The client's input buffer.
+
+`outBuffer` The client's output buffer.
 
 `connected` Whether the client is connected to a server or not
 
@@ -34,7 +36,8 @@ typedef struct cutilsTcpClient{
 	#endif
 
 	cutilsString server;
-	cutilsByteStream buffer;
+	cutilsByteStream inBuffer;
+	cutilsByteStream outBuffer;
 	bool connected;
 } cutilsTcpClient;
 ```

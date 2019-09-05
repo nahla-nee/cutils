@@ -34,10 +34,16 @@ int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, cutilsT
 		return err;
 	}
 
-	err = cutilsByteStreamInit(&client->buffer, server->clientBufferSize);
+	err = cutilsByteStreamInit(&client->inBuffer, server->clientBufferSize);
 	if(err != CUTILS_OK){
 		cutilsStringDeinit(&client->address);
 		return err;
+	}
+
+	err = cutilsByteStreamInit(&client->outBuffer, server->clientBufferSize);
+	if(err != CUTILS_OK){
+		cutilsStringDeinit(&client->address);
+		cutilsByteStreamDeinit(&client->inBuffer);
 	}
 
 	char address[INET6_ADDRSTRLEN];
@@ -53,14 +59,16 @@ int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, cutilsT
 	client->ev = event_new(server->eb, client->sockfd, EV_READ | EV_PERSIST, callback, client);
 	if(client->ev == NULL){
 		cutilsStringDeinit(&client->address);
-		cutilsByteStreamDeinit(&client->buffer);
+		cutilsByteStreamDeinit(&client->inBuffer);
+		cutilsByteStreamDeinit(&client->outBuffer);
 		client->server = NULL;
 		return CUTILS_CREATE_EVENT;
 	}
 	struct timeval *timeout = server->useTimeoutClient?&server->timeoutClient:NULL;
 	if(event_add(client->ev, timeout) == -1){
 		cutilsStringDeinit(&client->address);
-		cutilsByteStreamDeinit(&client->buffer);
+		cutilsByteStreamDeinit(&client->inBuffer);
+		cutilsByteStreamDeinit(&client->outBuffer);
 		event_free(client->ev);
 		client->ev = NULL;
 		client->server = NULL;
@@ -82,7 +90,8 @@ void cutilsTcpServerClientDeinit(cutilsTcpServerClient *client){
 	close(client->sockfd);
 	client->sockfd = -1;
 	cutilsStringDeinit(&client->address);
-	cutilsByteStreamDeinit(&client->buffer);
+	cutilsByteStreamDeinit(&client->inBuffer);
+	cutilsByteStreamDeinit(&client->outBuffer);
 	client->server = NULL;
 }
 
