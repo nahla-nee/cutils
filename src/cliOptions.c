@@ -49,7 +49,7 @@ int cutilsCliOptionFindFlag(char *flag, int argc, char **argv){
 			index = i;
 		}
 	}
-	return i;
+	return index;
 }
 
 int cutilsCliOptionFindFlags(char *shortFlag, char *longFlag, int argc, char **argv){
@@ -59,5 +59,5 @@ int cutilsCliOptionFindFlags(char *shortFlag, char *longFlag, int argc, char **a
 			index = i;
 		}
 	}
-	return i;
+	return index;
 }
