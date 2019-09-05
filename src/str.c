@@ -6,6 +6,7 @@ int cutilsStringInit(cutilsString *str, size_t capacity){
 	if(str->str == NULL){
 		return CUTILS_NOMEM;
 	}
+	str->str[capacity] = '\0';
 	str->len = 0;
 	str->capacity = capacity;
 	return CUTILS_OK;
