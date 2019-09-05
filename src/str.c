@@ -78,11 +78,12 @@ int cutilsStringResize(cutilsString *str, size_t len){
 }
 
 int cutilsStringResizeRepeat(cutilsString *str, size_t len, char c){
+	size_t oldLen = str->len;
 	cutilsStringResize(str, len);
 
 	if(len > str->len){
 		//repeat the last character of the string to fill up the space
-		memset(str->str+str->len, c, len-str->len);
+		memset(str->str+oldLen, c, len-str->len);
 	}
 
 	return CUTILS_OK;
