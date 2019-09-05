@@ -6,7 +6,7 @@ int cutilsStringInit(cutilsString *str, size_t capacity){
 	if(str->str == NULL){
 		return CUTILS_NOMEM;
 	}
-	str->str[capacity] = '\0';
+	str->str[0] = '\0';
 	str->len = 0;
 	str->capacity = capacity;
 	return CUTILS_OK;
@@ -58,6 +58,10 @@ void cutilsStringFree(cutilsString *str){
 }
 
 int cutilsStringResize(cutilsString *str, size_t len){
+	if(len == SIZE_MAX){
+		return CUTILS_NOMEM;
+	}
+
 	if(len >= str->capacity){
 		char *tmp = realloc(str->str, len+1);
 		if(tmp == NULL){
