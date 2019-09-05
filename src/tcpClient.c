@@ -1,19 +1,19 @@
 #include "tcpClient.h"
 
-int cutilsTcpClientInit(cutilsTcpClient *client, size_t bufferSize){
+int cutilsTcpClientInit(cutilsTcpClient *client, size_t inBufferSize, size_t outBufferSize){
 	client->sockfd = -1;
 	int err = cutilsStringInit(&client->server, INET6_ADDRSTRLEN);
 	if(err != CUTILS_OK){
 		return err;
 	}
 
-	err = cutilsByteStreamInit(&client->inBuffer, bufferSize);
+	err = cutilsByteStreamInit(&client->inBuffer, inBufferSize);
 	if(err != CUTILS_OK){
 		cutilsStringDeinit(&client->server);
 		return err;
 	}
 
-	err = cutilsByteStreamInit(&client->outBuffer, bufferSize);
+	err = cutilsByteStreamInit(&client->outBuffer, outBufferSize);
 	if(err != CUTILS_OK){
 		cutilsStringDeinit(&client->server);
 		cutilsByteStreamDeinit(&client->inBuffer);
@@ -38,12 +38,12 @@ int cutilsTcpClientInit(cutilsTcpClient *client, size_t bufferSize){
 	return CUTILS_OK;
 }
 
-cutilsTcpClient* cutilsTcpClientNew(size_t bufferSize){
+cutilsTcpClient* cutilsTcpClientNew(size_t inBufferSize, size_t outBufferSize){
 	cutilsTcpClient *ret = malloc(sizeof(cutilsTcpClient));
 	if(ret == NULL){
 		return NULL;
 	}
-	if(cutilsTcpClientInit(ret, bufferSize) != CUTILS_OK){
+	if(cutilsTcpClientInit(ret, inBufferSize, outBufferSize) != CUTILS_OK){
 		free(ret);
 		return NULL;
 	}

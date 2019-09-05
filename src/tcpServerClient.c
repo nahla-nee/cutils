@@ -14,7 +14,8 @@ typedef struct cutilsTcpServer{
 	bool useTimeoutClient;
 	#endif
 
-	size_t clientBufferSize;
+	size_t clientInBufferSize;
+	size_t clientOutBufferSize;
 	cutilsString port;
 	int backlog;
 	bool started;
@@ -34,13 +35,13 @@ int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, cutilsT
 		return err;
 	}
 
-	err = cutilsByteStreamInit(&client->inBuffer, server->clientBufferSize);
+	err = cutilsByteStreamInit(&client->inBuffer, server->clientInBufferSize);
 	if(err != CUTILS_OK){
 		cutilsStringDeinit(&client->address);
 		return err;
 	}
 
-	err = cutilsByteStreamInit(&client->outBuffer, server->clientBufferSize);
+	err = cutilsByteStreamInit(&client->outBuffer, server->clientOutBufferSize);
 	if(err != CUTILS_OK){
 		cutilsStringDeinit(&client->address);
 		cutilsByteStreamDeinit(&client->inBuffer);

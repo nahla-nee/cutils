@@ -32,8 +32,8 @@ typedef struct cutilsTcpClient{
 	bool connected;
 } cutilsTcpClient;
 
-int cutilsTcpClientInit(cutilsTcpClient *client, size_t bufferSize);
-cutilsTcpClient* cutilsTcpClientNew(size_t bufferSize);
+int cutilsTcpClientInit(cutilsTcpClient *client, size_t inBufferSize, size_t outBufferSize);
+cutilsTcpClient* cutilsTcpClientNew(size_t inBufferSize, size_t outBufferSize);
 void cutilsTcpClientDeinit(cutilsTcpClient *client);
 void cutilsTcpClientFree(cutilsTcpClient *client);
 

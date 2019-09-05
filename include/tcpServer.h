@@ -31,14 +31,15 @@ typedef struct cutilsTcpServer{
 	bool useTimeoutClient;
 	#endif
 
-	size_t clientBufferSize;
+	size_t clientInBufferSize;
+	size_t clientOutBufferSize;
 	cutilsString port;
 	int backlog;
 	bool started;
 } cutilsTcpServer;
 
-int cutilsTcpServerInit(cutilsTcpServer *server, size_t clientBufferSize);
-cutilsTcpServer* cutilsTcpServerNew(size_t clientBufferSize);
+int cutilsTcpServerInit(cutilsTcpServer *server, size_t inBufferSize, size_t outBufferSize);
+cutilsTcpServer* cutilsTcpServerNew(size_t inBufferSize, size_t outBufferSize);
 void cutilsTcpServerDeinit(cutilsTcpServer *server);
 void cutilsTcpServerFree(cutilsTcpServer *server);
 

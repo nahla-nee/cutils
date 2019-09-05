@@ -2,9 +2,10 @@
 
 #include <stdio.h>
 
-int cutilsTcpServerInit(cutilsTcpServer *server, size_t clientBufferSize){
+int cutilsTcpServerInit(cutilsTcpServer *server, size_t inBufferSize, size_t outBufferSize){
 	server->sockfd = -1;
-	server->clientBufferSize = clientBufferSize;
+	server->clientInBufferSize = inBufferSize;
+	server->clientOutBufferSize = outBufferSize;
 	int err = cutilsStringInit(&server->port, 0);
 	if(err != CUTILS_OK){
 		return err;
@@ -27,12 +28,12 @@ int cutilsTcpServerInit(cutilsTcpServer *server, size_t clientBufferSize){
 	return CUTILS_OK;
 }
 
-cutilsTcpServer* cutilsTcpServerNew(size_t clientBufferSize){
+cutilsTcpServer* cutilsTcpServerNew(size_t inBufferSize, size_t outBufferSize){
 	cutilsTcpServer *ret = malloc(sizeof(cutilsTcpServer));
 	if(ret == NULL){
 		return NULL;
 	}
-	if(cutilsTcpServerInit(ret, clientBufferSize) != CUTILS_OK){
+	if(cutilsTcpServerInit(ret, inBufferSize, outBufferSize) != CUTILS_OK){
 		free(ret);
 		return NULL;
 	}
