@@ -14,52 +14,371 @@
 #endif
 
 #include "str.h"
-#include "bytestream.h"
 
-typedef struct cutilsTcpServer{
-	int sockfd;
-
-	#ifndef CUTILS_NO_LIBEVENT
-	struct event_base *eb;
-	struct event *ev;
-	struct timeval timeout;
-	bool useTimeout;
-
-	struct timeval timeoutClient;
-	bool useTimeoutClient;
-	#endif
-
-	size_t clientInBufferSize;
-	size_t clientOutBufferSize;
-	cutilsString port;
-	int backlog;
+#ifndef CUTILS_NO_LIBEVENT
+#define CUTILS_DEF_TCP_SERVER_STRUCT\
+	int sockfd;\
+\
+	struct even_base *eb;\
+	struct event *ev;\
+	struct timeval timeout;\
+	bool useTimeout;\
+\
+	struct timeval clientTimeout;\
+	bool useClientTimeout;\
+\
+	cutilsString port;\
+	int backlog;\
 	bool started;
-} cutilsTcpServer;
 
-int cutilsTcpServerInit(cutilsTcpServer *server, size_t inBufferSize, size_t outBufferSize);
-cutilsTcpServer* cutilsTcpServerNew(size_t inBufferSize, size_t outBufferSize);
-void cutilsTcpServerDeinit(cutilsTcpServer *server);
-void cutilsTcpServerFree(cutilsTcpServer *server);
+#define CUTILS_DEF_TCP_SERVER_H(STRUCT_NAME)\
+	int STRUCT_NAME##TcpInit(STRUCT_NAME *server);\
+	STRUCT_NAME* STRUCT_NAME##TcpNew();\
+	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *server);\
+	void STRUCT_NAME##TcpDelete(STRUCT_NAME *server);\
+\
+	int STRUCT_NAME##TcpStart(STRUCT_NAME *server, const char *port, int backlog,\
+	event_callback_fn callback);\
+	void STRUCT_NAME##TcpStop(STRUCT_NAME *server);\
+\
+	int STRUCT_NAME##TcpStartEventLoop(STRUCT_NAME *server);\
+	int STRUCT_NAME##TcpStopEventLoop(STRUCT_NAME *server);\
+	int STRUCT_NAME##TcpForceStopEventLoop(STRUCT_NAME *server);\
+\
+	void STRUCT_NAME##TcpSetTimeout(STRUCT_NAME *server, time_t sec, suseconds_t usec);\
+	void STRUCT_NAME##TcpClearTimeout(STRUCT_NAME *server);\
+\
+	void STRUCT_NAME##TcpSetClientTimeout(STRUCT_NAME *server, time_t sec, suseconds_t usec);\
+	void STRUCT_NAME##TcpClearClientTimeout(STRUCT_NAME *server);
 
-#ifndef CUTILS_NO_LIBEVENT
-int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog,
-	void *usrptr, event_callback_fn callback);
+#define CUTILS_DEF_TCP_SERVER_C(STRUCT_NAME)\
+	int STRUCT_NAME##TcpInit(STRUCT_NAME *server){\
+		server->sockfd = -1;\
+		int err = cutilsStringInit(&server->port, 0);\
+		if(err != CUTILS_OK){\
+			return err;\
+		}\
+		server->backlog = 0;\
+\
+		server->ev = NULL;\
+		server->eb = event_base_new();\
+		if(server->eb == NULL){\
+			cutilsStringDeinit(&server->port);\
+			return CUTILS_NOMEM;\
+		}\
+		server->useTimeout = server->useTimeoutClient = false;\
+
+		server->started = false;\
+
+		return CUTILS_OK;\
+	}\
+\
+	STRUCT_NAME* STRUCT_NAME##TcpNew(){\
+		STRUCT_NAME *ret = malloc(sizeof(STRUCT_NAME));\
+		if(ret == NULL){\
+			return NULL;\
+		}\
+		if(STRUCT_NAME##TcpInit(ret) != CUTILS_OK){\
+			free(ret);\
+			return NULL;\
+		}\
+\
+		return ret;\
+	}\
+\
+	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *server){\
+		if(server->started){\
+			cutilsTcpServerStop(server);\
+		}\
+\
+		event_base_free(server->eb);\
+		server->eb = NULL;\
+\
+		cutilsStringDeinit(&server->port);\
+	}\
+\
+	void STRUCT_NAME##TcpDelete(STRUCT_NAME *server){\
+		STRUCT_NAME##TcpDeinit(server);\
+		free(server);\
+	}\
+\
+	int STRUCT_NAME##TcpStart(STRUCT_NAME *server, const char *port, int backlog,\
+	event_callback_fn callback){\
+		if(server->started){\
+			cutilsTcpServerClose(server);\
+		}\
+\
+		int err = cutilsStringSet(&server->port, port);\
+		if(err != CUTILS_OK){\
+			return err;\
+		}\
+		server->backlog = backlog;\
+\
+		int yes = 1;\
+\
+		struct addrinfo *res, hints;\
+		memset(&hints, 0, sizeof(struct addrinfo));\
+		hints.ai_family = AF_UNSPEC;\
+		hints.ai_socktype = SOCK_STREAM;\
+		hints.ai_flags = AI_PASSIVE;\
+\
+		if(getaddrinfo(NULL, port, &hints, &res) != 0){\
+			return CUTILS_GETADDRINFO;\
+		}\
+\
+		struct addrinfo *p = res;\
+		while(p != NULL){\
+			int err = (server->sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol));\
+			if(err == -1){\
+				continue;\
+			}\
+			err = setsockopt(server->sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));\
+			if(err == -1){\
+				close(server->sockfd);\
+				server->sockfd = -1;\
+				continue;\
+			}\
+			err = bind(server->sockfd, p->ai_addr, p->ai_addrlen);\
+			if(err == -1){\
+				close(server->sockfd);\
+				server->sockfd = -1;\
+				continue;\
+			}\
+			err = listen(server->sockfd, backlog);\
+			if(err == -1){\
+				close(server->sockfd);\
+				server->sockfd = -1;\
+				continue;\
+			}\
+			if(callback != NULL){\
+				void *ptr = usrptr == NULL?server:usrptr;\
+				server->ev = event_new(server->eb, server->sockfd, EV_READ | EV_PERSIST, callback, ptr);\
+				if(server->ev == NULL){\
+					close(server->sockfd);\
+					server->sockfd = -1;\
+					freeaddrinfo(res);\
+					server->started = false;\
+					return CUTILS_CREATE_EVENT;\
+				}\
+\
+				struct timeval *timeout = server->useTimeout?&server->timeout:NULL;\
+				if(event_add(server->ev, timeout) == -1){\
+					event_free(server->ev);\
+					close(server->sockfd);\
+					server->sockfd = -1;\
+					server->started = false;\
+					return CUTILS_CREATE_EVENT;\
+				}\
+			}\
+			server->started = true;\
+			break;\
+\
+			p = p->ai_next;\
+		}\
+\
+		freeaddrinfo(res);\
+\
+		if(!server->started){\
+			return CUTILS_SOCKET;\
+		}\
+
+		return CUTILS_OK;
+	}\
+\
+	void STRUCT_NAME##TcpStop(STRUCT_NAME *server){\
+		if(!server->started){\
+			return;\
+		}\
+\
+		if(server->ev != NULL){\
+			event_del(server->ev);\
+			event_free(server->ev);\
+			server->ev = NULL;\
+		}\
+		server->useTimeout = server->useTimeoutClient = false;\
+\
+		close(server->sockfd);\
+		server->sockfd = -1;\
+\
+		cutilsStringSet(&server->port, "");\
+\
+		server->started = false;\
+	}\
+\
+	int STRUCT_NAME##TcpStartEventLoop(STRUCT_NAME *server){\
+		return event_base_loop(server->eb, EVLOOP_NO_EXIT_ON_EMPTY);\
+	}\
+\
+	int STRUCT_NAME##TcpStopEventLoop(STRUCT_NAME *server){\
+		return event_base_loopexit(server->eb, NULL);\
+	}\
+\
+	int STRUCT_NAME##TcpForceStopEventLoop(STRUCT_NAME *server){\
+		return event_base_loopbreak(server->eb);\
+	}\
+\
+	void STRUCT_NAME##TcpSetTimeout(STRUCT_NAME *server, time_t sec, suseconds_t usec){\
+		server->timeout.tv_sec = sec;\
+		server->timeout.tv_usec = usec;\
+		if(server->started){\
+			event_add(server->ev, &server->timeout);\
+		}\
+\
+		server->useTimeout = true;\
+	}\
+\
+	void STRUCT_NAME##TcpClearTimeout(STRUCT_NAME *server){\
+		if(server->started){\
+			event_add(server->ev, NULL);\
+		}\
+\
+		server->useTimeout = false;\
+	}\
+\
+	void STRUCT_NAME##TcpSetClientTimeout(STRUCT_NAME *server, time_t sec, suseconds_t usec){\
+		server->timeoutClient.tv_sec = sec;\
+		server->timeoutClient.tv_usec = usec;\
+\
+		server->useTimeoutClient = true;\
+	}\
+\
+	void STRUCT_NAME##TcpClearClientTimeout(STRUCT_NAME *server){\
+		server->useTimeoutClient = false;\
+	}
 #else
-int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog,
-	void *usrptr);
-#endif
-void cutilsTcpServerClose(cutilsTcpServer *server);
+#define CUTILS_DEF_TCP_SERVER_STRUCT\
+	int sockfd;\
+\
+	cutilsString port;\
+	int backlog;\
+	bool started;
 
-#ifndef CUTILS_NO_LIBEVENT
-int cutilsTcpServerStartEventLoop(cutilsTcpServer *server);
-int cutilsTcpServerStopEventLoop(cutilsTcpServer *server);
-int cutilsTcpServerForceStopEventLoop(cutilsTcpServer *server);
+#define CUTILS_DEF_TCP_SERVER_H(STRUCT_NAME)\
+	int STRUCT_NAME##TcpInit(STRUCT_NAME *server);\
+	STRUCT_NAME* STRUCT_NAME##TcpNew();\
+	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *server);\
+	void STRUCT_NAME##TcpDelete(STRUCT_NAME *server);\
+\
+	int STRUCT_NAME##TcpStart(STRUCT_NAME *server, const char *port, int backlog);\
+	void STRUCT_NAME##TcpStop(STRUCT_NAME *server);
 
-void cutilsTcpServerSetTimeout(cutilsTcpServer *server, time_t sec, suseconds_t usec);
-void cutilsTcpServerClearTimeout(cutilsTcpServer *server);
+#define CUTILS_DEF_TCP_SERVER_C(STRUCT_NAME)\
+	int STRUCT_NAME##TcpInit(STRUCT_NAME *server){\
+		server->sockfd = -1;\
+		int err = cutilsStringInit(&server->port, 0);\
+		if(err != CUTILS_OK){\
+			return err;\
+		}\
+		server->backlog = 0;\
+\
 
-void cutilsTcpServerSetClientTimeout(cutilsTcpServer *server, time_t sec, suseconds_t usec);
-void cutilsTcpServerClearClientTimeout(cutilsTcpServer *server);
+		server->started = false;\
+
+		return CUTILS_OK;\
+	}\
+\
+	STRUCT_NAME* STRUCT_NAME##TcpNew(){\
+		STRUCT_NAME *ret = malloc(sizeof(STRUCT_NAME));\
+		if(ret == NULL){\
+			return NULL;\
+		}\
+		if(STRUCT_NAME##TcpInit(ret) != CUTILS_OK){\
+			free(ret);\
+			return NULL;\
+		}\
+\
+		return ret;\
+	}\
+\
+	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *server){\
+		if(server->started){\
+			cutilsTcpServerStop(server);\
+		}\
+\
+		cutilsStringDeinit(&server->port);\
+	}\
+\
+	void STRUCT_NAME##TcpDelete(STRUCT_NAME *server){\
+		STRUCT_NAME##TcpDeinit(server);\
+		free(server);\
+	}\
+\
+	int STRUCT_NAME##TcpStart(STRUCT_NAME *server, const char *port, int backlog,\
+	event_callback_fn callback){\
+		if(server->started){\
+			cutilsTcpServerClose(server);\
+		}\
+\
+		int err = cutilsStringSet(&server->port, port);\
+		if(err != CUTILS_OK){\
+			return err;\
+		}\
+		server->backlog = backlog;\
+\
+		int yes = 1;\
+\
+		struct addrinfo *res, hints;\
+		memset(&hints, 0, sizeof(struct addrinfo));\
+		hints.ai_family = AF_UNSPEC;\
+		hints.ai_socktype = SOCK_STREAM;\
+		hints.ai_flags = AI_PASSIVE;\
+\
+		if(getaddrinfo(NULL, port, &hints, &res) != 0){\
+			return CUTILS_GETADDRINFO;\
+		}\
+\
+		struct addrinfo *p = res;\
+		while(p != NULL){\
+			int err = (server->sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol));\
+			if(err == -1){\
+				continue;\
+			}\
+			err = setsockopt(server->sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));\
+			if(err == -1){\
+				close(server->sockfd);\
+				server->sockfd = -1;\
+				continue;\
+			}\
+			err = bind(server->sockfd, p->ai_addr, p->ai_addrlen);\
+			if(err == -1){\
+				close(server->sockfd);\
+				server->sockfd = -1;\
+				continue;\
+			}\
+			err = listen(server->sockfd, backlog);\
+			if(err == -1){\
+				close(server->sockfd);\
+				server->sockfd = -1;\
+				continue;\
+			}\
+			server->started = true;\
+			break;\
+\
+			p = p->ai_next;\
+		}\
+\
+		freeaddrinfo(res);\
+\
+		if(!server->started){\
+			return CUTILS_SOCKET;\
+		}\
+
+		return CUTILS_OK;
+	}\
+\
+	void STRUCT_NAME##TcpStop(STRUCT_NAME *server){\
+		if(!server->started){\
+			return;\
+		}\
+\
+		close(server->sockfd);\
+		server->sockfd = -1;\
+\
+		cutilsStringSet(&server->port, "");\
+\
+		server->started = false;\
+	}\
+
 #endif
 
 #endif
