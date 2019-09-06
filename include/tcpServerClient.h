@@ -39,11 +39,7 @@ typedef struct cutilsTcpServerClient{
 	int STRUCT_NAME##TcpInit(STRUCT_NAME *client, int sockfd, struct sockaddr address,\
 		struct event_base *eb, struct timeval *timeout, event_callback_fn callback);\
 \
-	STRUCT_NAME* STRUCT_NAME##TcpNew(int sockfd, struct sockaddr address, struct event_base *eb,\
-		struct timeval *timeout, event_callback_fn callback);\
-\
-	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *client);\
-	void STRUCT_NAME##TcpDelete(STRUCT_NAME *client);
+	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *client);
 
 #define CUTILS_DEF_TCP_SERVER_CLIENT_C(STRUCT_NAME)\
 	int STRUCT_NAME##TcpInit(STRUCT_NAME *client, int sockfd,\ struct sockaddr address,\
@@ -79,20 +75,6 @@ typedef struct cutilsTcpServerClient{
 		return CUTILS_OK;\
 	}\
 \
-	STRUCT_NAME* STRUCT_NAME##TcpNew(int sockfd, struct sockaddr address, struct event_base *eb,\
-	struct timeval *timeout, event_callback_fn callback){\
-		STRUCT_NAME *ret = malloc(sizeof(STRUCT_NAME));\
-		if(ret == NULL){\
-			return NULL;\
-		}\
-		if(STRUCT_NAME##TcpInit(ret, address, eb, timeout, callback) != CUTILS_OK){\
-			free(ret);\
-			return NULL;\
-		}\
-\
-		return ret;\
-	}\
-\
 	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *client){\
 		if(client->ev != NULL){\
 			event_del(client->ev);\
@@ -117,9 +99,7 @@ typedef struct cutilsTcpServerClient{
 
 #define CUTILS_DEF_TCP_SERVER_CLIENT_H(STRUCT_NAME)\
 int STRUCT_NAME##TcpInit(STRUCT_NAME *client, int sockfd, struct sockaddr address);\
-STRUCT_NAME* TcpNew(int sockfd, struct sockaddr address);\
-void STRUCT_NAME##TcpDeinit(STRUCT_NAME *client);\
-void STRUCT_NAME##TcpDelete(STRUCT_NAME *client);
+void STRUCT_NAME##TcpDeinit(STRUCT_NAME *client);
 
 #define CUTILS_DEF_TCP_SERVER_CLIENT_C(STRUCT_NAME)\
 	int STRUCT_NAME##TcpInit(STRUCT_NAME *client, int sockfd,\ struct sockaddr address){\
@@ -137,29 +117,12 @@ void STRUCT_NAME##TcpDelete(STRUCT_NAME *client);
 		return CUTILS_OK;\
 	}\
 \
-	STRUCT_NAME* STRUCT_NAME##TcpNew(int sockfd, struct sockaddr address){\
-		STRUCT_NAME *ret = malloc(sizeof(STRUCT_NAME));\
-		if(ret == NULL){\
-			return NULL;\
-		}\
-		if(STRUCT_NAME##TcpInit(ret, address) != CUTILS_OK){\
-			free(ret);\
-			return NULL;\
-		}\
-\
-		return ret;\
-	}\
-\
 	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *client){\
 		close(client->sockfd);\
 		client->sockfd = -1;\
 		cutilsStringDeinit(&client->address);\
 	}\
-\
-	void STRUCT_NAME##TcpDelete(STRUCT_NAME *client){\
-		STRUCT_NAME##Deinit(client);\
-		free(client);\
-	}
+
 #endif
 
 #endif

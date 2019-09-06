@@ -29,9 +29,7 @@
 
 #define CUTILS_DEF_TCP_CLIENT_H(STRUCT_NAME)\
 	int STRUCT_NAME##TcpInit(STRUCT_NAME *client);\
-	STRUCT_NAME* STRUCT_NAME##TcpNew();\
 	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *client);\
-	void STRUCT_NAME##TcpDelete(STRUCT_NAME *client);\
 \
 	int STRUCT_NAME##TcpConnect(STRUCT_NAME *client, const char *address,\
 	const char *port, event_callback_fn callback);\
@@ -66,19 +64,6 @@
 		return CUTILS_OK;\
 	}\
 \
-	STRUCT_NAME* STRUCT_NAME##TcpNew(){\
-		STRUCT_NAME *ret = malloc(sizeof(STRUCT_NAME));\
-		if(ret == NULL){\
-			return NULL;\
-		}\
-		if(STRUCT_NAME##TcpInit(ret) != CUTILS_OK){\
-			free(ret);\
-			return NULL;\
-		}\
-\
-		return ret;\
-	}\
-\
 	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *client){\
 		if(client->connected){\
 			STRUCT_NAME##TcpDisconnect(client);\
@@ -88,11 +73,6 @@
 \
 		event_base_free(client->eb);\
 		client->eb = NULL;\
-	}\
-\
-	void STRUCT_NAME##TcpDelete(STRUCT_NAME *client){\
-		STRUCT_NAME##TcpDeinit(client);\
-		free(client);\
 	}\
 \
 	int STRUCT_NAME##TcpConnect(STRUCT_NAME *client, const char *address,\
@@ -216,9 +196,7 @@
 
 #define CUTILS_DEF_TCP_CLIENT_H(STRUCT_NAME)\
 	int STRUCT_NAME##TcpInit(STRUCT_NAME *client);\
-	STRUCT_NAME* STRUCT_NAME##TcpNew();\
 	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *client);\
-	void STRUCT_NAME##TcpDelete(STRUCT_NAME *client);\
 \
 	int STRUCT_NAME##TcpConnect(STRUCT_NAME *client, const char *address,\
 	const char *port);\
@@ -237,30 +215,12 @@
 		return CUTILS_OK;\
 	}\
 \
-	STRUCT_NAME* STRUCT_NAME##TcpNew(){\
-		STRUCT_NAME *ret = malloc(sizeof(STRUCT_NAME));\
-		if(ret == NULL){\
-			return NULL;\
-		}\
-		if(STRUCT_NAME##TcpInit(ret) != CUTILS_OK){\
-			free(ret);\
-			return NULL;\
-		}\
-\
-		return ret;\
-	}\
-\
 	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *client){\
 		if(client->connected){\
 			STRUCT_NAME##TcpDisconnect(client);\
 		}\
 \
 		cutilsStringDeinit(client->serverAddr);\
-	}\
-\
-	void STRUCT_NAME##TcpDelete(STRUCT_NAME *client){\
-		STRUCT_NAME##TcpDeinit(client);\
-		free(client);\
 	}\
 \
 	int STRUCT_NAME##TcpConnect(STRUCT_NAME *client, const char *address,\

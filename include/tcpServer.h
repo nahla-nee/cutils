@@ -33,9 +33,7 @@
 
 #define CUTILS_DEF_TCP_SERVER_H(STRUCT_NAME)\
 	int STRUCT_NAME##TcpInit(STRUCT_NAME *server);\
-	STRUCT_NAME* STRUCT_NAME##TcpNew();\
 	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *server);\
-	void STRUCT_NAME##TcpDelete(STRUCT_NAME *server);\
 \
 	int STRUCT_NAME##TcpStart(STRUCT_NAME *server, const char *port, int backlog,\
 	event_callback_fn callback);\
@@ -73,19 +71,6 @@
 		return CUTILS_OK;\
 	}\
 \
-	STRUCT_NAME* STRUCT_NAME##TcpNew(){\
-		STRUCT_NAME *ret = malloc(sizeof(STRUCT_NAME));\
-		if(ret == NULL){\
-			return NULL;\
-		}\
-		if(STRUCT_NAME##TcpInit(ret) != CUTILS_OK){\
-			free(ret);\
-			return NULL;\
-		}\
-\
-		return ret;\
-	}\
-\
 	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *server){\
 		if(server->started){\
 			cutilsTcpServerStop(server);\
@@ -95,11 +80,6 @@
 		server->eb = NULL;\
 \
 		cutilsStringDeinit(&server->port);\
-	}\
-\
-	void STRUCT_NAME##TcpDelete(STRUCT_NAME *server){\
-		STRUCT_NAME##TcpDeinit(server);\
-		free(server);\
 	}\
 \
 	int STRUCT_NAME##TcpStart(STRUCT_NAME *server, const char *port, int backlog,\
@@ -255,9 +235,7 @@
 
 #define CUTILS_DEF_TCP_SERVER_H(STRUCT_NAME)\
 	int STRUCT_NAME##TcpInit(STRUCT_NAME *server);\
-	STRUCT_NAME* STRUCT_NAME##TcpNew();\
 	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *server);\
-	void STRUCT_NAME##TcpDelete(STRUCT_NAME *server);\
 \
 	int STRUCT_NAME##TcpStart(STRUCT_NAME *server, const char *port, int backlog);\
 	void STRUCT_NAME##TcpStop(STRUCT_NAME *server);
@@ -277,30 +255,12 @@
 		return CUTILS_OK;\
 	}\
 \
-	STRUCT_NAME* STRUCT_NAME##TcpNew(){\
-		STRUCT_NAME *ret = malloc(sizeof(STRUCT_NAME));\
-		if(ret == NULL){\
-			return NULL;\
-		}\
-		if(STRUCT_NAME##TcpInit(ret) != CUTILS_OK){\
-			free(ret);\
-			return NULL;\
-		}\
-\
-		return ret;\
-	}\
-\
 	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *server){\
 		if(server->started){\
 			cutilsTcpServerStop(server);\
 		}\
 \
 		cutilsStringDeinit(&server->port);\
-	}\
-\
-	void STRUCT_NAME##TcpDelete(STRUCT_NAME *server){\
-		STRUCT_NAME##TcpDeinit(server);\
-		free(server);\
 	}\
 \
 	int STRUCT_NAME##TcpStart(STRUCT_NAME *server, const char *port, int backlog,\
