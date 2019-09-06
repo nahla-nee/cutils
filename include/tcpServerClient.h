@@ -36,12 +36,18 @@ typedef struct cutilsTcpServerClient{
 
 #ifndef CUTILS_NO_LIBEVENT
 int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, cutilsTcpServer *server,
-	struct sockaddr addr, socklen_t addrLen, event_callback_fn callback);
+	char *address, void *usrptr, event_callback_fn callback);
+
+cutilsTcpServerClient* cutilsTcpServerClientNew(int sockfd, cutilsTcpServer *server,
+	char *address, void *usrptr, event_callback_fn callback);
 #else
 int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, cutilsTcpServer *server,
-	struct sockaddr addr, socklen_t addrLen);
+	char *address, void *usrptr);
+cutilsTcpServerClient* cutilsTcpServerClientNew(int sockfd, cutilsTcpServer *server,
+	char *address, void *usrptr);
 #endif
 void cutilsTcpServerClientDeinit(cutilsTcpServerClient *client);
+void cutilsTcpServerClientFree(cutilsTcpServerClient *client);
 
 CUTILS_DEF_LINKED_LIST_H(cutilsTcpServerClient, cutilsTcpServerClientLL);
 

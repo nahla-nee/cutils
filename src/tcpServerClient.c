@@ -23,10 +23,10 @@ typedef struct cutilsTcpServer{
 
 #ifndef CUTILS_NO_LIBEVENT
 int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, cutilsTcpServer *server,
-	struct sockaddr addr, socklen_t addrLen, event_callback_fn callback){
+	char *address, void *usrptr, event_callback_fn callback){
 #else
 int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, cutilsTcpServer *server,
-	struct sockaddr addr, socklen_t addrLen){
+	char *address, void *usrptr){
 #endif
 	client->sockfd = sockfd;
 
@@ -47,16 +47,15 @@ int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, cutilsT
 		cutilsByteStreamDeinit(&client->inBuffer);
 	}
 
-	char address[INET6_ADDRSTRLEN];
-	inet_ntop(addr.sa_family, &client, address, INET6_ADDRSTRLEN);
 	cutilsStringSet(&client->address, address);
-	client->server = server;
 
 	#ifndef CUTILS_NO_LIBEVENT
 	if(callback == NULL){
 		client->ev = NULL;
 		return CUTILS_OK;
 	}
+
+	void *ptr = usrptr == NULL?client:usrptr;
 	client->ev = event_new(server->eb, client->sockfd, EV_READ | EV_PERSIST, callback, client);
 	if(client->ev == NULL){
 		cutilsStringDeinit(&client->address);
@@ -80,6 +79,30 @@ int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, cutilsT
 	return CUTILS_OK;
 }
 
+#ifndef CUTILS_NO_LIBEVENT
+cutilsTcpServerClient* cutilsTcpServerClientNew(int sockfd, cutilsTcpServer *server,
+	char *address, void *usrptr, event_callback_fn callback){
+#else
+cutilsTcpServerClient* cutilsTcpServerClientNew(int sockfd, cutilsTcpServer *server,
+	char *address, void *usrptr){
+#endif
+	cutilsTcpServerClient *ret = malloc(sizeof(cutilsTcpServerClient));
+	if(ret == NULL){
+		return NULL;
+	}
+	#ifndef CUTILS_NO_LIBEVENT
+	int err = cutilsTcpServerClientInit(ret, sockfd, server, address, usrptr, callback);
+	#else
+	int err = cutilsTcpServerClientInit(ret, sockfd, server, address, usrptr);
+	#endif
+	if(err != CUTILS_OK){
+		free(ret);
+		return NULL;
+	}
+
+	return ret;
+}
+
 void cutilsTcpServerClientDeinit(cutilsTcpServerClient *client){
 	#ifndef CUTILS_NO_LIBEVENT
 	if(client->ev != NULL){
@@ -94,6 +117,11 @@ void cutilsTcpServerClientDeinit(cutilsTcpServerClient *client){
 	cutilsByteStreamDeinit(&client->inBuffer);
 	cutilsByteStreamDeinit(&client->outBuffer);
 	client->server = NULL;
+}
+
+void cutilsTcpServerClientFree(cutilsTcpServerClient *client){
+	cutilsTcpServerClientDeinit(client);
+	free(client);
 }
 
 CUTILS_DEF_LINKED_LIST_C(cutilsTcpServerClient, cutilsTcpServerClientLL, cutilsTcpServerClientLLRemoveCallback);

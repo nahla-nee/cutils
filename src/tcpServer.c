@@ -210,7 +210,7 @@ void cutilsTcpServerSetClientTimeout(cutilsTcpServer *server, time_t sec, suseco
 		cutilsTcpServerClientLLNode *client = server->clients.head;
 		while(client != NULL){
 			event_add(client->data.ev, &server->timeoutClient);
-			client = client->next;\
+			client = client->next;
 		}
 	}
 	server->useTimeoutClient = true;
@@ -221,7 +221,7 @@ void cutilsTcpServerClearClientTimeout(cutilsTcpServer *server){
 		cutilsTcpServerClientLLNode *client = server->clients.head;
 		while(client != NULL){
 			event_add(client->data.ev, NULL);
-			client = client->next;\
+			client = client->next;
 		}
 	}
 	server->useTimeoutClient = false;
@@ -229,21 +229,24 @@ void cutilsTcpServerClearClientTimeout(cutilsTcpServer *server){
 #endif
 
 #ifndef CUTILS_NO_LIBEVENT
-int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd,
-	struct sockaddr addr, socklen_t addrLen, event_callback_fn callback){
+int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd, struct sockaddr addr,
+	void *usrptr, event_callback_fn callback){
 #else
-int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd,
-	struct sockaddr addr, socklen_t addrLen){
+int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd, struct sockaddr addr,
+	void *usrptr){
 #endif
 	cutilsTcpServerClientLLNode *newClient = malloc(sizeof(cutilsTcpServerClientLLNode));
 	if(newClient == NULL){
 		return CUTILS_NOMEM;
 	}
 
+	char address[INET6_ADDRSTRLEN];
+	inet_ntop(addr.sa_family, &addr, address, INET6_ADDRSTRLEN);
+
 	#ifndef CUTILS_NO_LIBEVENT
-	int err = cutilsTcpServerClientInit(&newClient->data, sockfd, server, addr, addrLen, callback);
+	int err = cutilsTcpServerClientInit(&newClient->data, sockfd, server, address, usrptr, callback);
 	#else
-	int err = cutilsTcpServerClientInit(&newClient->data, sockfd, server, addr, addrLen);
+	int err = cutilsTcpServerClientInit(&newClient->data, sockfd, server, address, usrptr);
 	#endif
 	if(err != CUTILS_OK){
 		free(newClient);
