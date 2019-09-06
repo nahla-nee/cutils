@@ -19,7 +19,7 @@
 #define CUTILS_DEF_TCP_SERVER_STRUCT\
 	int sockfd;\
 \
-	struct even_base *eb;\
+	struct event_base *eb;\
 	struct event *ev;\
 	struct timeval timeout;\
 	bool useTimeout;\
@@ -36,7 +36,7 @@
 	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *server);\
 \
 	int STRUCT_NAME##TcpStart(STRUCT_NAME *server, const char *port, int backlog,\
-	event_callback_fn callback);\
+	void *usrptr, event_callback_fn callback);\
 	void STRUCT_NAME##TcpStop(STRUCT_NAME *server);\
 \
 	int STRUCT_NAME##TcpStartEventLoop(STRUCT_NAME *server);\
@@ -64,16 +64,16 @@
 			cutilsStringDeinit(&server->port);\
 			return CUTILS_NOMEM;\
 		}\
-		server->useTimeout = server->useTimeoutClient = false;\
+		server->useTimeout = server->useClientTimeout = false;\
 \
 		server->started = false;\
-
+\
 		return CUTILS_OK;\
 	}\
 \
 	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *server){\
 		if(server->started){\
-			cutilsTcpServerStop(server);\
+			STRUCT_NAME##TcpStop(server);\
 		}\
 \
 		event_base_free(server->eb);\
@@ -83,9 +83,9 @@
 	}\
 \
 	int STRUCT_NAME##TcpStart(STRUCT_NAME *server, const char *port, int backlog,\
-	event_callback_fn callback){\
+	void *usrptr, event_callback_fn callback){\
 		if(server->started){\
-			cutilsTcpServerClose(server);\
+			STRUCT_NAME##TcpStop(server);\
 		}\
 \
 		int err = cutilsStringSet(&server->port, port);\
@@ -161,8 +161,8 @@
 		if(!server->started){\
 			return CUTILS_SOCKET;\
 		}\
-
-		return CUTILS_OK;
+\
+		return CUTILS_OK;\
 	}\
 \
 	void STRUCT_NAME##TcpStop(STRUCT_NAME *server){\
@@ -175,7 +175,7 @@
 			event_free(server->ev);\
 			server->ev = NULL;\
 		}\
-		server->useTimeout = server->useTimeoutClient = false;\
+		server->useTimeout = server->useClientTimeout = false;\
 \
 		close(server->sockfd);\
 		server->sockfd = -1;\
@@ -216,14 +216,14 @@
 	}\
 \
 	void STRUCT_NAME##TcpSetClientTimeout(STRUCT_NAME *server, time_t sec, suseconds_t usec){\
-		server->timeoutClient.tv_sec = sec;\
-		server->timeoutClient.tv_usec = usec;\
+		server->clientTimeout.tv_sec = sec;\
+		server->clientTimeout.tv_usec = usec;\
 \
-		server->useTimeoutClient = true;\
+		server->useClientTimeout = true;\
 	}\
 \
 	void STRUCT_NAME##TcpClearClientTimeout(STRUCT_NAME *server){\
-		server->useTimeoutClient = false;\
+		server->useClientTimeout = false;\
 	}
 #else
 #define CUTILS_DEF_TCP_SERVER_STRUCT\
@@ -249,9 +249,8 @@
 		}\
 		server->backlog = 0;\
 \
-
 		server->started = false;\
-
+\
 		return CUTILS_OK;\
 	}\
 \

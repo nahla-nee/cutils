@@ -14,19 +14,6 @@
 #include "errors.h"
 #include "str.h"
 
-typedef struct cutilsTcpServerClient{
-	int sockfd;
-
-	#ifndef CUTILS_NO_LIBEVENT
-	struct event *ev;
-	#endif
-
-	cutilsTcpServer *server;
-	cutilsString clientAddress;
-	cutilsByteStream inBuffer;
-	cutilsByteStream outBuffer;
-} cutilsTcpServerClient;
-
 #ifndef CUTILS_NO_LIBEVENT
 #define CUTILS_DEF_TCP_SERVER_CLIENT_STRUCT\
 	int sockfd;\
@@ -42,30 +29,30 @@ typedef struct cutilsTcpServerClient{
 	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *client);
 
 #define CUTILS_DEF_TCP_SERVER_CLIENT_C(STRUCT_NAME)\
-	int STRUCT_NAME##TcpInit(STRUCT_NAME *client, int sockfd,\ struct sockaddr address,\
-	struct event_base *eb, struct timeval *timeout event_callback_fn callback){\
+	int STRUCT_NAME##TcpInit(STRUCT_NAME *client, int sockfd, struct sockaddr address,\
+	struct event_base *eb, struct timeval *timeout, event_callback_fn callback){\
 		client->sockfd = sockfd;\
 \
-		int err = cutilsStringInit(&client->address, INET6_ADDRSTRLEN);\
+		int err = cutilsStringInit(&client->clientAddress, INET6_ADDRSTRLEN);\
 		if(err != CUTILS_OK){\
 			return err;\
 		}\
 \
 		char clientAddr[INET6_ADDRSTRLEN];\
 		inet_ntop(address.sa_family, &address, clientAddr, INET6_ADDRSTRLEN);\
-		cutilsStringSet(&client->address, address);\
+		cutilsStringSet(&client->clientAddress, clientAddr);\
 \
 		client->ev = NULL;\
 \
 		if(callback != NULL){\
 			client->ev = event_new(eb, client->sockfd, EV_READ | EV_PERSIST, callback, client);\
 			if(client->ev == NULL){\
-				cutilsStringDeinit(&client->address);\
+				cutilsStringDeinit(&client->clientAddress);\
 				return CUTILS_CREATE_EVENT;\
 			}\
 \
 			if(event_add(client->ev, timeout) == -1){\
-				cutilsStringDeinit(&client->address);\
+				cutilsStringDeinit(&client->clientAddress);\
 				event_free(client->ev);\
 				client->ev = NULL;\
 				return CUTILS_CREATE_EVENT;\
@@ -84,7 +71,7 @@ typedef struct cutilsTcpServerClient{
 \
 		close(client->sockfd);\
 		client->sockfd = -1;\
-		cutilsStringDeinit(&client->address);\
+		cutilsStringDeinit(&client->clientAddress);\
 	}\
 \
 	void STRUCT_NAME##TcpDelete(STRUCT_NAME *client){\
@@ -102,17 +89,17 @@ int STRUCT_NAME##TcpInit(STRUCT_NAME *client, int sockfd, struct sockaddr addres
 void STRUCT_NAME##TcpDeinit(STRUCT_NAME *client);
 
 #define CUTILS_DEF_TCP_SERVER_CLIENT_C(STRUCT_NAME)\
-	int STRUCT_NAME##TcpInit(STRUCT_NAME *client, int sockfd,\ struct sockaddr address){\
+	int STRUCT_NAME##TcpInit(STRUCT_NAME *client, int sockfd, struct sockaddr address){\
 		client->sockfd = sockfd;\
 \
-		int err = cutilsStringInit(&client->address, INET6_ADDRSTRLEN);\
+		int err = cutilsStringInit(&client->clientAddress, INET6_ADDRSTRLEN);\
 		if(err != CUTILS_OK){\
 			return err;\
 		}\
 \
 		char clientAddr[INET6_ADDRSTRLEN];\
 		inet_ntop(address.sa_family, &address, clientAddr, INET6_ADDRSTRLEN);\
-		cutilsStringSet(&client->address, address);\
+		cutilsStringSet(&client->clientAddress, address);\
 \
 		return CUTILS_OK;\
 	}\
@@ -120,7 +107,7 @@ void STRUCT_NAME##TcpDeinit(STRUCT_NAME *client);
 	void STRUCT_NAME##TcpDeinit(STRUCT_NAME *client){\
 		close(client->sockfd);\
 		client->sockfd = -1;\
-		cutilsStringDeinit(&client->address);\
+		cutilsStringDeinit(&client->clientAddress);\
 	}\
 
 #endif
