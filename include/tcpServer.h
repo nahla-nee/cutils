@@ -65,7 +65,7 @@
 			return CUTILS_NOMEM;\
 		}\
 		server->useTimeout = server->useTimeoutClient = false;\
-
+\
 		server->started = false;\
 
 		return CUTILS_OK;\
