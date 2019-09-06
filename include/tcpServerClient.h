@@ -13,7 +13,6 @@
 
 #include "errors.h"
 #include "str.h"
-#include "tcpServer.h"
 
 typedef struct cutilsTcpServerClient{
 	int sockfd;
