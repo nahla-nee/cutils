@@ -42,9 +42,11 @@ void cutilsTcpServerDeinit(cutilsTcpServer *server);
 void cutilsTcpServerFree(cutilsTcpServer *server);
 
 #ifndef CUTILS_NO_LIBEVENT
-int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog, event_callback_fn callback);
+int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog,
+	void *usrptr, event_callback_fn callback);
 #else
-int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog);
+int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog,
+	void *usrptr);
 #endif
 void cutilsTcpServerClose(cutilsTcpServer *server);
 

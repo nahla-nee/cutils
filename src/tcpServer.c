@@ -58,9 +58,11 @@ void cutilsTcpServerFree(cutilsTcpServer *server){
 }
 
 #ifndef CUTILS_NO_LIBEVENT
-int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog, event_callback_fn callback){
+int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog,
+	void *usrptr, event_callback_fn callback){
 #else
-int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog){
+int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog,
+	void *usrptr){
 #endif
 	if(server->started){
 		cutilsTcpServerClose(server);
@@ -110,7 +112,8 @@ int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog)
 		}
 		#ifndef CUTILS_NO_LIBEVENT
 		if(callback != NULL){
-			server->ev = event_new(server->eb, server->sockfd, EV_READ | EV_PERSIST, callback, server);
+			void *ptr = usrptr == NULL?server:usrptr;
+			server->ev = event_new(server->eb, server->sockfd, EV_READ | EV_PERSIST, callback, ptr);
 			if(server->ev == NULL){
 				close(server->sockfd);
 				server->sockfd = -1;
