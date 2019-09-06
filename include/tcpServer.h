@@ -15,11 +15,9 @@
 
 #include "str.h"
 #include "bytestream.h"
-#include "tcpServerClient.h"
 
 typedef struct cutilsTcpServer{
 	int sockfd;
-	cutilsTcpServerClientLL clients;
 
 	#ifndef CUTILS_NO_LIBEVENT
 	struct event_base *eb;
@@ -61,14 +59,5 @@ void cutilsTcpServerClearTimeout(cutilsTcpServer *server);
 void cutilsTcpServerSetClientTimeout(cutilsTcpServer *server, time_t sec, suseconds_t usec);
 void cutilsTcpServerClearClientTimeout(cutilsTcpServer *server);
 #endif
-
-#ifndef CUTILS_NO_LIBEVENT
-int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd, struct sockaddr addr,
-	void *usrptr, event_callback_fn callback);
-#else
-int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd, struct sockaddr addr,
-	void *usrptr);
-#endif
-void cutilsTcpServerRemoveClient(cutilsTcpServer *server, cutilsTcpServerClient *client);
 
 #endif

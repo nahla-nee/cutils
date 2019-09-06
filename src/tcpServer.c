@@ -16,7 +16,6 @@ int cutilsTcpServerInit(cutilsTcpServer *server, size_t inBufferSize, size_t out
 	server->ev = NULL;
 	server->eb = event_base_new();
 	if(server->eb == NULL){
-		cutilsTcpServerClientLLDeinit(&server->clients);
 		cutilsStringDeinit(&server->port);
 		return CUTILS_NOMEM;
 	}
@@ -67,12 +66,7 @@ int cutilsTcpServerStart(cutilsTcpServer *server, const char *port, int backlog)
 		cutilsTcpServerClose(server);
 	}
 
-	int err = cutilsTcpServerClientLLInit(&server->clients, 0);
-	if(err != CUTILS_OK){
-		return err;
-	}
-
-	err = cutilsStringSet(&server->port, port);
+	int err = cutilsStringSet(&server->port, port);
 	if(err != CUTILS_OK){
 		return err;
 	}
@@ -164,8 +158,6 @@ void cutilsTcpServerClose(cutilsTcpServer *server){
 	server->useTimeout = server->useTimeoutClient = false;
 	#endif
 
-	cutilsTcpServerClientLLDeinit(&server->clients);
-
 	close(server->sockfd);
 	server->sockfd = -1;
 
@@ -206,59 +198,12 @@ void cutilsTcpServerClearTimeout(cutilsTcpServer *server){
 void cutilsTcpServerSetClientTimeout(cutilsTcpServer *server, time_t sec, suseconds_t usec){
 	server->timeoutClient.tv_sec = sec;
 	server->timeoutClient.tv_usec = usec;
-	if(server->started){
-		cutilsTcpServerClientLLNode *client = server->clients.head;
-		while(client != NULL){
-			event_add(client->data.ev, &server->timeoutClient);
-			client = client->next;
-		}
-	}
+
 	server->useTimeoutClient = true;
 }
 
 void cutilsTcpServerClearClientTimeout(cutilsTcpServer *server){
-	if(server->started){
-		cutilsTcpServerClientLLNode *client = server->clients.head;
-		while(client != NULL){
-			event_add(client->data.ev, NULL);
-			client = client->next;
-		}
-	}
 	server->useTimeoutClient = false;
 }
 #endif
 
-#ifndef CUTILS_NO_LIBEVENT
-int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd, struct sockaddr addr,
-	void *usrptr, event_callback_fn callback){
-#else
-int cutilsTcpServerAddClient(cutilsTcpServer *server, int sockfd, struct sockaddr addr,
-	void *usrptr){
-#endif
-	cutilsTcpServerClientLLNode *newClient = malloc(sizeof(cutilsTcpServerClientLLNode));
-	if(newClient == NULL){
-		return CUTILS_NOMEM;
-	}
-
-	char address[INET6_ADDRSTRLEN];
-	inet_ntop(addr.sa_family, &addr, address, INET6_ADDRSTRLEN);
-
-	#ifndef CUTILS_NO_LIBEVENT
-	int err = cutilsTcpServerClientInit(&newClient->data, sockfd, server, address, usrptr, callback);
-	#else
-	int err = cutilsTcpServerClientInit(&newClient->data, sockfd, server, address, usrptr);
-	#endif
-	if(err != CUTILS_OK){
-		free(newClient);
-		return err;
-	}
-
-	newClient->data.node = newClient;
-	cutilsTcpServerClientLLConnectNodeEnd(&server->clients, newClient);
-
-	return CUTILS_OK;
-}
-
-void cutilsTcpServerRemoveClient(cutilsTcpServer *server, cutilsTcpServerClient *client){
-	cutilsTcpServerClientLLRemoveNode(client->node);
-}

@@ -15,9 +15,7 @@
 #include "str.h"
 #include "bytestream.h"
 #include "linkedList.h"
-
-typedef struct cutilsTcpServer cutilsTcpServer;
-typedef struct cutilsTcpServerClientLLNode cutilsTcpServerClientLLNode;
+#include "tcpServer.h"
 
 typedef struct cutilsTcpServerClient{
 	int sockfd;
@@ -30,8 +28,6 @@ typedef struct cutilsTcpServerClient{
 	cutilsString address;
 	cutilsByteStream inBuffer;
 	cutilsByteStream outBuffer;
-
-	cutilsTcpServerClientLLNode *node;
 } cutilsTcpServerClient;
 
 #ifndef CUTILS_NO_LIBEVENT
@@ -48,9 +44,5 @@ cutilsTcpServerClient* cutilsTcpServerClientNew(int sockfd, cutilsTcpServer *ser
 #endif
 void cutilsTcpServerClientDeinit(cutilsTcpServerClient *client);
 void cutilsTcpServerClientFree(cutilsTcpServerClient *client);
-
-CUTILS_DEF_LINKED_LIST_H(cutilsTcpServerClient, cutilsTcpServerClientLL);
-
-void cutilsTcpServerClientLLRemoveCallback(cutilsTcpServerClientLLNode *node, size_t count, void *userData);
 
 #endif

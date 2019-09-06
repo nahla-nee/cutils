@@ -1,26 +1,5 @@
 #include "tcpServerClient.h"
 
-typedef struct cutilsTcpServer{
-	int sockfd;
-	cutilsTcpServerClientLL clients;
-
-	#ifndef CUTILS_NO_LIBEVENT
-	struct event_base *eb;
-	struct event *ev;
-	struct timeval timeout;
-	bool useTimeout;
-
-	struct timeval timeoutClient;
-	bool useTimeoutClient;
-	#endif
-
-	size_t clientInBufferSize;
-	size_t clientOutBufferSize;
-	cutilsString port;
-	int backlog;
-	bool started;
-} cutilsTcpServer;
-
 #ifndef CUTILS_NO_LIBEVENT
 int cutilsTcpServerClientInit(cutilsTcpServerClient *client, int sockfd, cutilsTcpServer *server,
 	char *address, void *usrptr, event_callback_fn callback){
@@ -122,14 +101,4 @@ void cutilsTcpServerClientDeinit(cutilsTcpServerClient *client){
 void cutilsTcpServerClientFree(cutilsTcpServerClient *client){
 	cutilsTcpServerClientDeinit(client);
 	free(client);
-}
-
-CUTILS_DEF_LINKED_LIST_C(cutilsTcpServerClient, cutilsTcpServerClientLL, cutilsTcpServerClientLLRemoveCallback);
-
-void cutilsTcpServerClientLLRemoveCallback(cutilsTcpServerClientLLNode *node, size_t count, void *userData){
-	for(size_t i = 0; i < count; i++){
-		cutilsTcpServerClientLLNode *next = node->next;
-		cutilsTcpServerClientDeinit(&node->data);
-		node = next;
-	}
 }
