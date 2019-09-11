@@ -24,7 +24,7 @@
 	struct timeval timeout;\
 	bool useTimeout;\
 \
-	cutilsString server;\
+	cutilsString serverAddr;\
 	bool connected;
 
 #define CUTILS_DEF_TCP_CLIENT_H(STRUCT_NAME)\
@@ -35,17 +35,17 @@
 	const char *port, event_callback_fn callback);\
 	void STRUCT_NAME##TcpDisconnect(STRUCT_NAME *client);\
 \
-	int STRUCT_NAME##TcpStartEventLoop(cutilsTcpClient *client);\
-	int STRUCT_NAME##TcpStopEventLoop(cutilsTcpClient *client);\
-	int STRUCT_NAME##TcpForceStopEventLoop(cutilsTcpClient *client);\
+	int STRUCT_NAME##TcpStartEventLoop(STRUCT_NAME *client);\
+	int STRUCT_NAME##TcpStopEventLoop(STRUCT_NAME *client);\
+	int STRUCT_NAME##TcpForceStopEventLoop(STRUCT_NAME *client);\
 \
-	void STRUCT_NAME##TcpSetTimeout(cutilsTcpClient *client, time_t sec, suseconds_t usec);\
-	void STRUCT_NAME##TcpClearTimeout(cutilsTcpClient *client);
+	void STRUCT_NAME##TcpSetTimeout(STRUCT_NAME *client, time_t sec, suseconds_t usec);\
+	void STRUCT_NAME##TcpClearTimeout(STRUCT_NAME *client);
 
 #define CUTILS_DEF_TCP_CLIENT_C(STRUCT_NAME)\
 	int STRUCT_NAME##TcpInit(STRUCT_NAME *client){\
 		client->sockfd = -1;\
-		int err = cutilsStringInit(&client->server, INET6_ADDRSTRLEN);\
+		int err = cutilsStringInit(&client->serverAddr, INET6_ADDRSTRLEN);\
 		if(err != CUTILS_OK){\
 			return err;\
 		}\
@@ -69,7 +69,7 @@
 			STRUCT_NAME##TcpDisconnect(client);\
 		}\
 \
-		cutilsStringDeinit(client->serverAddr);\
+		cutilsStringDeinit(&client->serverAddr);\
 \
 		event_base_free(client->eb);\
 		client->eb = NULL;\
@@ -130,7 +130,7 @@
 \
 			client->connected = true;\
 			break;\
-
+\
 			p = p->ai_next;\
 		}\
 \
@@ -161,18 +161,18 @@
 		cutilsStringSet(&client->serverAddr, '\0');\
 	}\
 \
-	int STRUCT_NAME##TcpStartEventLoop(cutilsTcpClient *client){\
+	int STRUCT_NAME##TcpStartEventLoop(STRUCT_NAME *client){\
 		return event_base_loop(client->eb, EVLOOP_NO_EXIT_ON_EMPTY);\
 	}\
-
-	int STRUCT_NAME##TcpStopEventLoop(cutilsTcpClient *client){\
+\
+	int STRUCT_NAME##TcpStopEventLoop(STRUCT_NAME *client){\
 		return event_base_loopexit(client->eb, NULL);\
 	}\
-	int STRUCT_NAME##TcpForceStopEventLoop(cutilsTcpClient *client){\
+	int STRUCT_NAME##TcpForceStopEventLoop(STRUCT_NAME *client){\
 		return event_base_loopbreak(client->eb);\
 	}\
 \
-	void STRUCT_NAME##TcpSetTimeout(cutilsTcpClient *client, time_t sec, suseconds_t usec){\
+	void STRUCT_NAME##TcpSetTimeout(STRUCT_NAME *client, time_t sec, suseconds_t usec){\
 		client->timeout.tv_sec = sec;\
 		client->timeout.tv_usec = usec;\
 		if(client->connected){\
@@ -181,7 +181,7 @@
 		client->useTimeout = true;\
 	}\
 \
-	void STRUCT_NAME##TcpClearTimeout(cutilsTcpClient *client){\
+	void STRUCT_NAME##TcpClearTimeout(STRUCT_NAME *client){\
 		if(client->connected){\
 			event_add(client->ev, NULL);\
 		}\
