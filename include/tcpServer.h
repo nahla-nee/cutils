@@ -1,11 +1,16 @@
 #ifndef CUTILS_TCP_SERVER_H
 #define CUTILS_TCP_SERVER_H
 
+#ifndef _WIN32
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#else
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#endif
 #include <string.h>
 #include <stdbool.h>
 
