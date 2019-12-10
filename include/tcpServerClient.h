@@ -49,7 +49,7 @@
 \
 		client->ev = NULL;\
 \
-		if(callback != NULL){\
+		if(eb != NULL){\
 			client->ev = event_new(eb, client->sockfd, EV_READ | EV_PERSIST, callback, client);\
 			if(client->ev == NULL){\
 				cutilsStringDeinit(&client->clientAddress);\
