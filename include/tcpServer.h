@@ -267,8 +267,7 @@
 		cutilsStringDeinit(&server->port);\
 	}\
 \
-	int STRUCT_NAME##TcpStart(STRUCT_NAME *server, const char *port, int backlog,\
-	event_callback_fn callback){\
+	int STRUCT_NAME##TcpStart(STRUCT_NAME *server, const char *port, int backlog){\
 		if(server->started){\
 			cutilsTcpServerClose(server);\
 		}\
