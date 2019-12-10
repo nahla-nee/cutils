@@ -326,8 +326,8 @@
 		if(!server->started){\
 			return CUTILS_SOCKET;\
 		}\
-
-		return CUTILS_OK;
+\
+		return CUTILS_OK;\
 	}\
 \
 	void STRUCT_NAME##TcpStop(STRUCT_NAME *server){\
