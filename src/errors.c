@@ -14,8 +14,10 @@ const char* errorCodeToStr(int code){
 			return "failed getaddrinfo call.";
 		case CUTILS_SOCKET:
 			return "failed to create socket.";
+		#ifndef CUTILS_NO_LIBEVENT
 		case CUTILS_CREATE_EVENT:
-			return "failed to create event/event_base.";
+			return "failed to create event or timeout.";
+		#endif
 		default:
 			return "unkown error code.";
 	}
