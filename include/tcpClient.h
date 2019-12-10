@@ -262,7 +262,7 @@
 \
 			client->connected = true;\
 			break;\
-
+\
 			p = p->ai_next;\
 		}\
 \
