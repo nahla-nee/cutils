@@ -1,6 +1,6 @@
 # logger
 
-A simple logging utility
+A simple logging utility.
 
 ## Enum
 
@@ -25,7 +25,8 @@ typedef enum cutilsLogLevel{
 
 `logLevel` the minimum level for that a message must be to to be logged.
 
-Note: the init function intializes `info`, and `warning` to be `stdout`, and `error`, and `fatal` to be `stderr` by default.
+Note: the init function intializes `info`, and `warning` to be `stdout`, and
+`error`, and `fatal` to be `stderr` by default.
 
 ```c
 typedef struct cutilsLogger{
@@ -47,7 +48,10 @@ Initializes the logger files, and sets `logger->logLevel` to `level`.
 
 Allocates a new `cutilsLogger` struct, and intializes it with `level`.
 
-This function returns a pointer to a `cutilsLogger` struct if no errors occurred, or `NULL` if it could not allocate the memory required for the struct.
+return value:
+
+* A pointer to a `cutilsLogger` struct.
+* `NULL` if the function failed to allocated the memory required for the struct.
 
 >`void cutilsLoggerDeinit(cutilsLogger *logger)`
 
@@ -55,9 +59,11 @@ Zeroes out the logger struct.
 
 >`void cutilsLoggerFree(cutilsLogger *logger)`
 
-Zeroes out the logger struct, and then calls free on `logger`. Use this with structs that have been allocated using `cutilsLoggerNew`
+Zeroes out the logger struct, and then calls free on `logger`. Use this with structs
+that have been allocated using `cutilsLoggerNew`
 
 >`void cutilsLoggerLog(cutilsLogger *logger, const char *msg, cutilsLogLevel level)`
 
-Prints `msg` to the appropriate log file if `level` is greater than or equal to `logger->logLevel`.
+Prints `msg` to the appropriate log file if `level` is greater than or equal to
+`logger->logLevel`.
 

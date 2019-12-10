@@ -1,8 +1,7 @@
 # linkedList
 
 A way to define a linked list for any given type through two macros.
-`CUTILS_DEF_LINKED_LIST_H` which defines the appropriate header info (struct and function
-prototypes), and `CUTILS_DEF_LINKED_LIST_C` which define the functions.
+`CUTILS_DEF_LINKED_LIST_H`, and `CUTILS_DEF_LINKED_LIST_C`.
 
 ## Struct
 
@@ -12,7 +11,9 @@ prototypes), and `CUTILS_DEF_LINKED_LIST_C` which define the functions.
 
 `nodeCount` Total nodes in the list.
 
-`callback` The function to call when an element is about to removed from a list. Works like a destructor.
+`callback` The function to call when an element is about to be removed from the
+list. Works like a destructor/deallocator. Function signature shopuld be:
+`void removeFn(NAME##Node*, size_t, void*)`.
 
 `usrptr` A custom data pointer to pass to the callback function.
 
@@ -43,34 +44,52 @@ typedef struct NAME##Node{
 } NAME##Node;
 ```
 
-## Functions
+## Functions/Macros
 
 >`CUTILS_DEF_LINKED_LIST_H(TYPE, NAME)`
 
-This macro defines the linked list struct. `TYPE` will be what datatype thes struct
-holds, `NAME` is the actual struct name.
+Defines the linked list struct, and the needed function prototypes.
+`TYPE` will be what datatype thes struct holds, `NAME` is the actual struct name.
+
+note: the `TYPE` and `NAME` passed to this macro must be the same as the ones
+passed to `CUTILS_DEF_LINKED_LIST_C`.
 
 >`CUTILS_DEF_LINKED_LIST_C(TYPE, NAME, DEFAULT_CALLBACK)`
 
-This macro defines the actual functions to be used with the struct. `TYPE` and `NAME` should be the same as th ones used with `CUTILS_DEF_LINKED_LIST_H`. `DEFAULT_CALLBACK` is the default value for the struct's `callback`.
+Defines the functions to be used with the struct. `DEFAULT_CALLBACK`
+is the default value for the struct's `callback` function, which acts as a
+destructor/dealloactor for when 1 or more elements are removed. In the case that
+`callback` is `NULL` then no callback will be made.
+
+note: the `TYPE` and `NAME` passed to this macro must be the same as the ones
+passed to `CUTILS_DEF_LINKED_LIST_H`.
 
 >`int NAME##Init(NAME *list, size_t initialNodes)`
 
 Intializes the list, and gives it `intialNodes` nodes to start with.
 
-This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+return value:
+
+* `CUTILS_OK` if no errors occured.
+* `CUTILS_NOMEM` if it failed to alloacte the required memory.
 
 >`NAME* NAME##New(size_t initialNodes)`
 
 Allocates a new linked list, and intializes it with `initialNodes`.
 
-This function returns a pointer to a `NAME` struct if no errors occurred, or `NULL` if it failed to allocate, or intialize the struct.
+return value:
+
+* A pointer to a `NAME` struct.
+* `NULL` if the function failed to alloacte or initialize the struct.
 
 >`int NAME##Copy(NAME *dst, NAME *src)`
 
 Resizes `dst` to have `src->nodeCount` nodes, and copies the node values from `src` to `dst`.
 
-This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+return value:
+
+* `CUTILS_OK` if no errors occured.
+* `CUTILS_NOMEM` if the function failed to allocate the required memory.
 
 >`void NAME##Move(NAME *dst, NAME *src)`
 
@@ -100,31 +119,46 @@ Sets `list->callback` to callback.
 
 Resizes the amount of nodes `list` has to be the same as `count`.
 
-This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+return value:
+
+* `CUTILS_OK` if no errors occured.
+* `CUTILS_NOMEM` if the function failed to allocate the required memory.
 
 >`int NAME##AllocNodes(size_t count, NAME *list, NAME##Node **head, NAME##Node **tail)`
 
 Alloctes `count` nodes. Sets `head` to point to the head of the allocated nodes, and `tail` to point the tail of the allocates nodes`. `node->list` will be set to `list`.
 
-This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+return value:
+
+* `CUTILS_OK` if no errors occured.
+* `CUTILS_NOMEM` if the function failed to allocate the required memory.
 
 >`int NAME##PushBack(NAME *list, TYPE x)`
 
 Attempts to add a node containing the value `x` to the end of the list.
 
-This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+return value:
+
+* `CUTILS_OK` if no errors occured.
+* `CUTILS_NOMEM` if the function failed to allocate the required memory.
 
 >`int NAME##PushBackNode(NAME *list, NAME##Node *x)`
 
 Attempts to add a node containing the value `x->data` to the end of the list.
 
-This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+return value:
+
+* `CUTILS_OK` if no errors occured.
+* `CUTILS_NOMEM` if the function failed to allocate the required memory.
 
 >`int NAME##PushBackList(NAME *list, NAME *x)`
 
 Attempts to add the values in all the nodes in `x` to the end of the list.
 
-This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+return value:
+
+* `CUTILS_OK` if no errors occured.
+* `CUTILS_NOMEM` if the function failed to allocate the required memory.
 
 >`void NAME##ConnectNode(NAME##Node *node, NAME##Node *x)`
 
@@ -162,22 +196,34 @@ Removes all nodes from `start` to `end` from the list that they belong to.
 
 Creates a new node with the value `x`, and inserts it into `node`'s place.
 
-This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+return value:
+
+* `CUTILS_OK` if no errors occured.
+* `CUTILS_NOMEM` if the function failed to allocate the required memory.
 
 >`int NAME##InsertNode(NAME##Node *node, NAME##Node *x)`
 
 Creates a new node with the value in `x`, and inserts it into `node`'s place.
 
-This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+return value:
+
+* `CUTILS_OK` if no errors occured.
+* `CUTILS_NOMEM` if the function failed to allocate the required memory.
 
 >`int NAME##InsertNodes(NAME##Node *node, NAME##Node *x)`
 
 Creates new nodes with the values in `x`, and inserts them into `node`'s place.
 
-This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+return value:
+
+* `CUTILS_OK` if no errors occured.
+* `CUTILS_NOMEM` if the function failed to allocate the required memory.
 
 >`int NAME##InsertList(NAME##Node *node, NAME *x)`
 
 Creates new nodes with the values in `x`, and inserts them into `node`'s place.
 
-This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it failed to allocate the required memory.
+return value:
+
+* `CUTILS_OK` if no errors occured.
+* `CUTILS_NOMEM` if the function failed to allocate the required memory.
