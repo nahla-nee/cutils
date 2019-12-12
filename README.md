@@ -21,12 +21,8 @@ All documentation can be found in `docs/`
 * str
 	A simple string implementation.
 * tcpClient
-	A set of macros to add tcp client capabilities to any struct with optional
-	libevent support with optional libevent support.
+	A struct to handle connecting to a tcp server.
 * tcpServer
-	A set of macros to add tcp server capabilities to any struct with optional
-	libevent support with optional libevent support.
+	A struct to handle a tcp server.
 * tcpServerClient
-	A set of macros to add tcp server client (how the server represents a
-	client) capabilities to any struct with optional libevent support.
-
+	A struct to represent a client to a server.
