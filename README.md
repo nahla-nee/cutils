@@ -6,8 +6,6 @@ All documentation can be found in `docs/`
 
 ## Utilities available:
 
-* bytestream
-	A dynamic array of bytes, implemented using dynArray.
 * cliOptions
 	Struct and utility functions to parse arugments passed to program.
 * dynArray
