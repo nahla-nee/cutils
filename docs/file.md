@@ -113,23 +113,6 @@ return value:
 
 Number of bytes read into `string`.
 
->`size_t cutilsFileReadByteStream(cutilsFile *file, cutilsByteStream *stream)`
-
-Reads from the current position indicator of the file till the end of the file
-into `stream`.
-
-return value:
-
-Number of bytes read into `stream`.
-
->`size_t cutilsFileReadByteStreamSize(cutilsFile *file, cutilsByteStream *stream, size_t size)`
-
-Reads `size` bytes from the current position indicator of the file into `stream`.
-
-return value:
-
-Number of bytes read into `stream`.
-
 >`size_t cutilsFileRead(cutilsFile *file, void *data)`
 
 Reads from the current position indicator of the file till the end of the file
@@ -163,23 +146,6 @@ Writes `size` bytes from `string` into the file, if `size` is greater than
 return value:
 
 Number of bytes return to `file`.
-
->`size_t cutilsFileWriteByteStream(cutilsFile *file, cutilsByteStream *stream)`
-
-Writes all of the data in `stream` to the file.
-
-return value:
-
-Number of bytes written to `file`.
-
->`size_t cutilsFileWriteByteStreamSize(cutilsFile *file, cutilsByteStream *stream, size_t size)`
-
-Writes `size` bytes from `stream` into the file, if `size` is greater than
-`stream->size` it will only write `stream->size` bytes.
-
-return value:
-
-Number of bytes written to `file`.
 
 >`size_t cutilsFileWrite(cutilsFile *file, void *data, size_t size)`
 

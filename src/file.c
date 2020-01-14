@@ -122,14 +122,6 @@ size_t cutilsFileReadStringSize(cutilsFile *file, cutilsString *string, size_t s
 	return cutilsFileReadSize(file, string->str, size);
 }
 
-size_t cutilsFileReadByteStream(cutilsFile *file, cutilsByteStream *stream){
-	return cutilsFileRead(file, stream->data);
-}
-
-size_t cutilsFileReadByteStreamSize(cutilsFile *file, cutilsByteStream *stream, size_t size){
-	return cutilsFileReadSize(file, stream->data, size);
-}
-
 size_t cutilsFileRead(cutilsFile *file, void *data){
 	return fread(data, 1, file->size, file->file);
 }
@@ -145,15 +137,6 @@ size_t cutilsFileWriteString(cutilsFile *file, cutilsString *string){
 size_t cutilsFileWriteStringSize(cutilsFile *file, cutilsString *string, size_t size){
 	size = size > string->len?string->len:size;
 	return cutilsFileWrite(file, string->str, size);
-}
-
-size_t cutilsFileWriteByteStream(cutilsFile *file, cutilsByteStream *stream){
-	return cutilsFileWrite(file, stream->data, stream->size);
-}
-
-size_t cutilsFileWriteByteStreamSize(cutilsFile *file, cutilsByteStream *stream, size_t size){
-	size = size > stream->size?stream->size:size;
-	return cutilsFileWrite(file, stream->data, size);
 }
 
 size_t cutilsFileWrite(cutilsFile *file, void *data, size_t size){

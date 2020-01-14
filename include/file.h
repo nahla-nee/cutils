@@ -3,7 +3,6 @@
 
 #include "errors.h"
 #include "str.h"
-#include "bytestream.h"
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -38,17 +37,11 @@ void cutilsFileFree(cutilsFile *file);
 size_t cutilsFileReadString(cutilsFile *file, cutilsString *string);
 size_t cutilsFileReadStringSize(cutilsFile *file, cutilsString *string, size_t size);
 
-size_t cutilsFileReadByteStream(cutilsFile *file, cutilsByteStream *stream);
-size_t cutilsFileReadByteStreamSize(cutilsFile *file, cutilsByteStream *stream, size_t size);
-
 size_t cutilsFileRead(cutilsFile *file, void *data);
 size_t cutilsFileReadSize(cutilsFile *file, void *data, size_t size);
 
 size_t cutilsFileWriteString(cutilsFile *file, cutilsString *string);
 size_t cutilsFileWriteStringSize(cutilsFile *file, cutilsString *string, size_t size);
-
-size_t cutilsFileWriteByteStream(cutilsFile *file, cutilsByteStream *stream);
-size_t cutilsFileWriteByteStreamSize(cutilsFile *file, cutilsByteStream *stream, size_t size);
 
 size_t cutilsFileWrite(cutilsFile *file, void *data, size_t size);
 
