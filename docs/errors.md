@@ -15,6 +15,6 @@ functions, as well as a function to convert each code to a string.
 
 ## Functions
 
-> `const char* errorCodeToStr(int code)`
+> `const char* cutilsErrorToStr(int code)`
 
 returns an error message that matches `code`.
