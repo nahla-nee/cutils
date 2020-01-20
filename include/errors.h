@@ -11,6 +11,6 @@
 #define CUTILS_CREATE_EVENT 6
 #endif
 
-const char* errorCodeToStr(int code);
+const char* cutilsErrorToStr(int code);
 
 #endif

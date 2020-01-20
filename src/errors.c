@@ -1,6 +1,6 @@
 #include "errors.h"
 
-const char* errorCodeToStr(int code){
+const char* cutilsErrorToStr(int code){
 	switch(code){
 		case CUTILS_OK:
 			return "No error.";
