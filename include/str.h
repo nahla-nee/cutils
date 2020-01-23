@@ -5,13 +5,12 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "errors.h"
-#include "dynArray.h"
-
 typedef struct cutilsString{
 	char *str;
 	size_t len;
 	size_t capacity;
+
+	int lastError;
 } cutilsString;
 
 /*
@@ -19,11 +18,12 @@ preallocates memory for the string, if successful it will have len bytes to hold
 if len is 0 then this function will just zero out the struct and return
 */
 int cutilsStringInit(cutilsString *str, size_t capacity);
-cutilsString* cutilsStringNew(size_t capacity);
 int cutilsStringCopy(cutilsString *dst, cutilsString *src);
 void cutilsStringMove(cutilsString *dst, cutilsString *src);
 void cutilsStringSwap(cutilsString *a, cutilsString *b);
 void cutilsStringDeinit(cutilsString *str);
+
+cutilsString* cutilsStringNew(size_t capacity);
 void cutilsStringFree(cutilsString *str);
 
 int cutilsStringResize(cutilsString *str, size_t len);
@@ -77,9 +77,5 @@ int cutilsStringDeleteRange(cutilsString *str, size_t start, size_t end);
 		cutilsString *: cutilsStringSetString,\
 		const cutilsString *: cutilsStringSetString\
 	)(STR, X)
-
-void cutilsStringArrRemoveCallback(cutilsString *arr, size_t count, void *usrData);
-
-CUTILS_DEF_DYNARRAY_H(cutilsString, cutilsStringArr);
 
 #endif
