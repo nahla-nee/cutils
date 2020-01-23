@@ -18,9 +18,3 @@ All documentation can be found in `docs/`
 	A simple logging implementation.
 * str
 	A simple string implementation.
-* tcpClient
-	A struct to handle connecting to a tcp server.
-* tcpServer
-	A struct to handle a tcp server.
-* tcpServerClient
-	A struct to represent a client to a server.
