@@ -14,13 +14,21 @@ own default callback function.
 
 `capacity` The max amount of characters the string can hold at the moment.
 
+`lastError` The last error that occured during cutils function calls. This is a read only variable.
+
 Note: The total amount of memory allocated is always `capacity+1`.
+
+Note: The resize functions will only ever call `realloc` if they need to increase
+the size of the buffer, if you want to free up some of the allocated memory use
+`cutilsStringReserve`
 
 ```C
 typedef struct cutilsString{
 	char *str;
 	size_t len;
 	size_t capacity;
+
+	int lastError;
 } cutilsString;
 ```
 
@@ -34,16 +42,6 @@ return value:
 
 * `CUTILS_OK` if no errors occured.
 * `CUTILS_NOMEM` if the function failed to allocate the required memory.
-
->`cutilsString* cutilsStringNew(size_t capacity)`
-
-Allocates a `cutilsString` struct, and calls `cutilsStringInit` with the given
-`capacity`.
-
-return value:
-
-* A pointer to a `cutilsString` struct.
-* `NULL` if the function failed to allocate or initialize the struct.
 
 >`int cutilsStringCopy(cutilsString *dst, cutilsString *src)`
 
@@ -66,6 +64,16 @@ Swaps struct `a` with struct `b`.
 
 Frees memory allocated by `str`, and zeroes out the struct.
 
+>`cutilsString* cutilsStringNew(size_t capacity)`
+
+Allocates a `cutilsString` struct, and calls `cutilsStringInit` with the given
+`capacity`.
+
+return value:
+
+* A pointer to a `cutilsString` struct.
+* `NULL` if the function failed to allocate or initialize the struct.
+
 >`void cutilsStringFree(cutilsString *str)`
 
 Free memory alloacted by `str`, zeroes out the struct, then frees `str`. Use this
@@ -73,7 +81,9 @@ function with strings allocated by `cutilsStringNew`.
 
 >`int cutilsStringResize(cutilsString *str, size_t len)`
 
-Attempts to resize the string to hold `len` characters.
+Attempts to resize the string to hold `len` characters. If `len` is greater than
+`str->len` the new memory is uninitialized, if you want to initialize it use
+`cutilsStringResizeRepeat`
 
 return value:
 
@@ -131,34 +141,37 @@ return value:
 
 >`int cutilsStringInsertChar(cutilsString *str, char x, size_t index)`
 
-Attempts to insert `x` into `index` at `index`.
+Attempts to insert `x` into `str` at `str->str+index`.
 
 return value:
 
 * `CUTILS_OK` if no errors occured.
+* `CUTILS_OUT_OF_BOUNDS` if `index` is greater than `str->len`
 * `CUTILS_NOMEM` if the function failed to allocate the required memory.
 
 >`int cutilsStringInsertCStr(cutilsString *str, const char *x, size_t index)`
 
-Attempts to insert `x` into `index` at `index`.
+Attempts to insert `x` into `str` at `str->str+index`.
 
 return value:
 
 * `CUTILS_OK` if no errors occured.
+* `CUTILS_OUT_OF_BOUNDS` if `index` is greater than `str->len`
 * `CUTILS_NOMEM` if the function failed to allocate the required memory.
 
 >`int cutilsStringInsertString(cutilsString *str, const cutilsString *x, size_t index)`
 
-Attempts to insert `x` into `index` at `index`.
+Attempts to insert `x` into `index` at `str->str+index`.
 
 return value:
 
 * `CUTILS_OK` if no errors occured.
+* `CUTILS_OUT_OF_BOUNDS` if `index` is greater than `str->len`
 * `CUTILS_NOMEM` if the function failed to allocate the required memory.
 
 >`int cutilsStringSetChar(cutilsString *str, char x)`
 
-Attempts to set `str` to `x`.
+Attempts to set `str` to hold a single char `x`.
 
 return value:
 
@@ -167,7 +180,7 @@ return value:
 
 >`int cutilsStringSetCStr(cutilsString *str, const char *x)`
 
-Attempts to set `str` to `x`.
+Attempts to set `str` to hold the string `x`.
 
 return value:
 
@@ -176,7 +189,7 @@ return value:
 
 >`int cutilsStringSetString(cutilsString *str, const cutilsString *x)`
 
-Attempts to set `str` to `x`.
+Attempts to set `str` to hold the string `x`.
 
 return value:
 
@@ -185,19 +198,19 @@ return value:
 
 >`int cutilsStringDelete(cutilsString *str, size_t index)`
 
-Attempts to remove the char at `index` from `str`.
+Attempts to remove the char at `str->str+index` from `str`.
 
 return value:
 
 * `CUTILS_OK` if no errors occured.
-* `CUTILS_OUT_OF_BOUNDS` if `index` is greater than `str->len`.
+* `CUTILS_OUT_OF_BOUNDS` if `index` is greater than or equal to `str->len`.
 
 >`int cutilsStringDeleteRange(cutilsString *str, size_t start, size_t end)`
 
-Attempts to remove all chars from `start` to `end` from `str`.
+Attempts to remove all chars from `str->str+start` to `str->str+end` from `str`.
 
 * `CUTILS_OK` if no errors occured.
-* `CUTILS_OUT_OF_BOUNDS` if either `start` or `end` is greater than `str->len`.
+* `CUTILS_OUT_OF_BOUNDS` if either `start` or `end` is greater than or equal to `str->len`.
 
 >`cutilsStringAppend(STR, X)`
 
