@@ -109,9 +109,6 @@ return value:
 * `CUTILS_OK` if no errors occured.
 * `CUTILS_NOMEM` if the function failed to allocate the required memory.
 
-This function returns `CUTILS_OK` if no errors occurred, or `CUTILS_NOMEM` if it
-failed to allocate the required memory.
-
 >`int cutilsStringAppendChar(cutilsString *str, char x)`
 
 Attempts to append `x` to the end of the string.
