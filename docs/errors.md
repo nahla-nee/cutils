@@ -7,8 +7,9 @@ functions, as well as a function to convert each code to a string.
 
 * `CUTILS_OK`: no error.
 * `CUTILS_NOMEM`: failed to allocate memory.
-* `CUTILS_OUT_OF_BOUNDS`: argument goes out of bounds.
+* `CUTILS_OUT_OF_BOUNDS`: out of bound access.
 * `CUTILS_FOPEN`: failed to open file.
+* `CUTILS_REALLOC_SHRINK`: failed to shrink memory using realloc, performing fake resize
 
 ## Functions
 

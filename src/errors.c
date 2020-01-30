@@ -10,6 +10,8 @@ const char* cutilsErrorToStr(int code){
 			return "Out of bounds access.";
 		case CUTILS_FOPEN:
 			return "Failed to open file.";
+		case CUTILS_REALLOC_SHRINK:
+			return "Failed to shrink memory using realloc, performing fake resize";
 		default:
 			return "Unkown error code.";
 	}

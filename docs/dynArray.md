@@ -5,23 +5,32 @@ made up of two macros: `CUTILS_DEF_DYNARRAY_H`, and `CUTILS_DEF_DYNARRAY_C`.
 
 ## Struct
 
-`data` pointer to the data allocated.
+`data` Pointer to the data allocated.
 
-`size` how many elements are in `@data`. This is 0 intially regardless of how
+`size` How many elements are in `@data`. This is 0 intially regardless of how
 much memory is allocated.
 
-`capacity` the maximum amount of elements the array can currently hold.
+`capacity` The maximum amount of elements the array can currently hold.
 
-`usrptr` custom user data passed to callback
+`lastError` The last error that occured during cutils function calls. This is a read only variable.
 
-`callback` the function to call when an element is about to removed from a list.
+`usrptr` Custom user data passed to callback
+
+`callback` The function to call when an element is about to removed from a list.
 Works like a destructor.
+
+Note: The resize functions will only ever call `realloc` if they need to increase
+the size of the buffer, if you want to free up some of the allocated memory use
+`NAME##Reserve`
 
 ```c
 typedef struct NAME{
 	TYPE *data;
 	size_t size;
 	size_t capacity;
+
+	int lastError;
+
 	void *usrptr;
 	NAME##RemoveFn callback;
 } NAME;
@@ -47,7 +56,8 @@ passed to `CUTILS_DEF_DYNARRAY_H`.
 >`typedef void(*NAME##RemoveFn)(TYPE *arr, size_t count, void* usrptr)`
 
 the callback function type. Gives you a pointer the first elemenet being removed
-along with how many elemnts in total are being removed.
+along with how many elemnts in total are being removed. `usrptr` is the value of
+the structs `usrptr` member.
 
 >`int NAME##Init(NAME *arr, size_t size)`
 
@@ -114,12 +124,17 @@ return value:
 
 >`int NAME##Reserve(NAME *arr, size_t capacity)`
 
-Attempts to reallocate the buffer to have a max capacity of `capacity`.
+Attempts to reallocate the buffer to have a max capacity of `capacity`. Regardless
+of the return value of this function, the struct's `callback` function pointer is
+always called (except if it is `NULL`), so if there is an error on a shrink any
+memory in that section (`arr->size` to `arr->capacity-1`) will be deinitialized, and
+`arr->size` will be set to `capacity` however `arr->capacity` will not change.
 
 return value:
 
 * `CUTILS_OK` if no errors occured.
 * `CUTILS_NOMEM` if the function failed to allocate the required memory.
+* `CUTILS_REALLOC_SHRINK` if the function failed to shrink the amount of allocated memory.
 
 >`int NAME##PushBack(NAME *arr, TYPE x)`
 
